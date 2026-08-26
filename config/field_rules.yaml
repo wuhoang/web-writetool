@@ -1,0 +1,144 @@
+document_type: drilling_fluid_daily
+
+section_titles:
+  - 钻具组合
+  - 井数据
+  - 套管
+  - 钻井液量 (m³)
+  - 循环数据
+  - 钻井液性能
+  - 当日材料
+  - 固控设备使用
+  - 工程作业简况
+  - 钻井液处理与维护
+
+layout_hints:
+  same_row_boundaries:
+    "钻井液性能|当日材料": 400
+    "工程作业简况|钻井液处理与维护": 296
+  section_xbands:
+    钻井液性能: [20, 399]
+    当日材料: [399, 580]
+    固控设备使用: [399, 580]
+    工程作业简况: [20, 296]
+    钻井液处理与维护: [296, 580]
+
+meta_fields:
+  well_name:
+    aliases: [井号]
+    type: string
+    transforms: [collapse_spaces, slash_first]
+  fsr_no:
+    aliases: [FSR]
+    type: string
+    derive_from: well_name
+    derive_pattern: 'FSR:?\s*(#\S+|\S+)'
+  operator:
+    aliases: [作业者]
+    type: string
+  operator_representative:
+    aliases: [作业者代表]
+    type: string
+  structure_oilfield:
+    aliases: [构造/油田, 油田]
+    type: string
+  region:
+    aliases: [区域]
+    type: string
+  report_date:
+    aliases: [日期]
+    type: date
+  measured_depth:
+    aliases: [测深/垂深, 垂深]
+    type: depth_pair
+  rig:
+    aliases: [钻机]
+    type: string
+  well_type:
+    aliases: [井别]
+    type: string
+  spud_date:
+    aliases: [开钻日期]
+    type: datetime
+  current_operation:
+    aliases: [当前工况]
+    type: string
+  water_depth_m:
+    aliases: [水深]
+    type: number
+    unit: m
+  fluid_type:
+    aliases: [钻井液类型]
+    type: string
+  software_no:
+    aliases: [软件编号]
+    type: string
+  kb_elevation_m:
+    aliases: [补心海拔]
+    type: number
+    unit: m
+  hole_section:
+    aliases: [井段]
+    type: string
+
+fluid_properties:
+  match_title: 钻井液性能
+  sample_columns: ["#1", "#2", "#3", "#4"]
+  row_aliases:
+    sample_location: [取样位置]
+    sampling_depth_m: [取样井深]
+    sampling_time: [取样时间]
+    density_gcm3: [钻井液密度, 泥浆密度, 密度]
+    funnel_viscosity_s: [漏斗粘度, 漏斗黏度]
+    av_mpas: [AV]
+    pv_mpas: [PV]
+    yp_pa: [YP]
+    lsyp_pa: [LSYP]
+    r600_300: [R600/300]
+    r200_100: [R200/100]
+    r6_3: [R6/3]
+    n_index: [N]
+    k_index: [K]
+    gel_10s_10min_pa: [切力(10s/m), 切力]
+    api_filtration_ml: [API滤失量, API失水, 失水]
+    api_cake_mm: [API泥饼厚度, 泥饼厚度]
+    sand_content_pct: [含砂量]
+    ph: [pH]
+    pm: [Pm]
+    pf_mf: [Pf/Mf]
+    ca_mgl: [钙离子浓度]
+    k_mgl: [钾离子浓度]
+    solids_vol_pct: [固相含量(体积), 固相含量]
+    water_vol_pct: [含水量(体积), 含水量]
+    oil_vol_pct: [含油量(体积), 含油量]
+    mbt_kgm3: [MBT]
+    cl_mgl: [氯根含量]
+  numeric_ranges:
+    density_gcm3: [0.8, 3.0]
+    api_filtration_ml: [0.0, 60.0]
+    funnel_viscosity_s: [5.0, 200.0]
+    sampling_depth_m: [0.0, 15000.0]
+    ph: [0.0, 14.0]
+
+materials_table:
+  match_title: 当日材料
+  columns:
+    code: [材料代号]
+    unit: [单位/单重, 单位单重]
+    quantity: [数量]
+
+solids_control_table:
+  match_title: 固控设备使用
+  columns:
+    equipment: [设备名称]
+    screen: [筛布]
+    hours: ["时间,h", "时间,h", 时间]
+
+narrative_sections:
+  engineering_summary: 工程作业简况
+  treatment_log: 钻井液处理与维护
+
+narrative_stop_patterns:
+  - 工程师
+  - 固相分析
+  - 水力学参数
