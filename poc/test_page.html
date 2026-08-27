@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>钻井液日报填写系统（模拟）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f0f2f5; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; color: #1a1a2e; }
+  .form-container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .section-title { font-size: 16px; font-weight: bold; color: #1890ff; border-bottom: 2px solid #1890ff; padding-bottom: 6px; margin: 20px 0 12px; }
+  .form-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+  .form-group { display: flex; align-items: center; min-width: 200px; }
+  .form-group label { min-width: 80px; font-size: 14px; color: #333; }
+  .form-group input, .form-group select { flex: 1; padding: 6px 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; min-width: 140px; }
+  .form-group input:focus, .form-group select:focus { border-color: #1890ff; outline: none; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+  textarea { width: 100%; min-height: 80px; padding: 8px 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; resize: vertical; font-family: "Microsoft YaHei", sans-serif; }
+  textarea:focus { border-color: #1890ff; outline: none; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  th, td { border: 1px solid #e8e8e8; padding: 6px 10px; text-align: center; font-size: 13px; }
+  th { background: #fafafa; font-weight: bold; }
+  td input { width: 100%; border: 1px solid transparent; padding: 4px 6px; text-align: center; font-size: 13px; }
+  td input:focus { border-color: #1890ff; background: #e6f7ff; }
+  .btn-row { text-align: center; margin-top: 20px; }
+  .btn { padding: 8px 24px; font-size: 14px; border: none; border-radius: 4px; cursor: pointer; margin: 0 8px; }
+  .btn-primary { background: #1890ff; color: #fff; }
+  .btn-success { background: #52c41a; color: #fff; }
+  .btn-danger { background: #ff4d4f; color: #fff; }
+  #status-bar { margin-top: 12px; padding: 8px 12px; background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 4px; display: none; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>钻井液日报填写系统（模拟页面）</h1>
+<div class="form-container">
+
+  <!-- 基本信息 -->
+  <div class="section-title">基本信息</div>
+  <div class="form-row">
+    <div class="form-group"><label>井号</label><input id="well_name" name="well_name" type="text" placeholder="请输入井号"></div>
+    <div class="form-group"><label>日期</label><input id="report_date" name="report_date" type="text" placeholder="YYYY/MM/DD"></div>
+    <div class="form-group"><label>油田</label><input id="oilfield" name="oilfield" type="text" placeholder="请输入油田"></div>
+    <div class="form-group"><label>区域</label><input id="region" name="region" type="text" placeholder="请输入区域"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>钻机</label><input id="rig" name="rig" type="text" placeholder="请输入钻机"></div>
+    <div class="form-group"><label>作业者</label><input id="operator" name="operator" type="text" placeholder="请输入作业者"></div>
+    <div class="form-group"><label>作业者代表</label><input id="operator_rep" name="operator_rep" type="text" placeholder="请输入代表"></div>
+    <div class="form-group"><label>软件编号</label><input id="software_no" name="software_no" type="text" placeholder="软件编号"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>井别</label>
+      <select id="well_type" name="well_type">
+        <option value="">-- 请选择 --</option>
+        <option value="探井">探井</option>
+        <option value="评价井">评价井</option>
+        <option value="开发井">开发井</option>
+        <option value="调整井">调整井</option>
+      </select>
+    </div>
+    <div class="form-group"><label>钻井液类型</label>
+      <select id="fluid_type" name="fluid_type">
+        <option value="">-- 请选择 --</option>
+        <option value="改进型 PEC">改进型 PEC</option>
+        <option value="PEC">PEC</option>
+        <option value="水基">水基</option>
+        <option value="油基">油基</option>
+      </select>
+    </div>
+    <div class="form-group"><label>当前工况</label>
+      <select id="current_operation" name="current_operation">
+        <option value="">-- 请选择 --</option>
+        <option value="纯钻进">纯钻进</option>
+        <option value="起钻">起钻</option>
+        <option value="下钻">下钻</option>
+        <option value="循环">循环</option>
+        <option value="测井">测井</option>
+        <option value="固井">固井</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>测深</label><input id="measured_depth" name="measured_depth" type="text" placeholder="m"></div>
+    <div class="form-group"><label>垂深</label><input id="tvd" name="tvd" type="text" placeholder="m"></div>
+    <div class="form-group"><label>水深</label><input id="water_depth" name="water_depth" type="text" placeholder="m"></div>
+    <div class="form-group"><label>补心海拔</label><input id="kb_elevation" name="kb_elevation" type="text" placeholder="m"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>开钻日期</label><input id="spud_date" name="spud_date" type="text" placeholder="YYYY/MM/DD"></div>
+    <div class="form-group"><label>井段</label><input id="hole_section" name="hole_section" type="text" placeholder="如 16&quot; Hole"></div>
+  </div>
+
+  <!-- 钻井液性能表 -->
+  <div class="section-title">钻井液性能</div>
+  <table id="fluid_properties_table">
+    <thead>
+      <tr>
+        <th>取样点</th><th>密度(g/cm³)</th><th>漏斗粘度(s)</th><th>AV(mPa·s)</th>
+        <th>PV(mPa·s)</th><th>YP(Pa)</th><th>API失水(mL)</th><th>泥饼(mm)</th>
+        <th>含砂(%)</th><th>pH</th><th>氯根(mg/L)</th><th>钙(mg/L)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="sample_1">
+        <td>#1</td>
+        <td><input id="s1_density" name="s1_density" type="text"></td>
+        <td><input id="s1_funnel" name="s1_funnel" type="text"></td>
+        <td><input id="s1_av" name="s1_av" type="text"></td>
+        <td><input id="s1_pv" name="s1_pv" type="text"></td>
+        <td><input id="s1_yp" name="s1_yp" type="text"></td>
+        <td><input id="s1_filtration" name="s1_filtration" type="text"></td>
+        <td><input id="s1_cake" name="s1_cake" type="text"></td>
+        <td><input id="s1_sand" name="s1_sand" type="text"></td>
+        <td><input id="s1_ph" name="s1_ph" type="text"></td>
+        <td><input id="s1_cl" name="s1_cl" type="text"></td>
+        <td><input id="s1_ca" name="s1_ca" type="text"></td>
+      </tr>
+      <tr id="sample_2">
+        <td>#2</td>
+        <td><input name="s2_density" type="text"></td>
+        <td><input name="s2_funnel" type="text"></td>
+        <td><input name="s2_av" type="text"></td>
+        <td><input name="s2_pv" type="text"></td>
+        <td><input name="s2_yp" type="text"></td>
+        <td><input name="s2_filtration" type="text"></td>
+        <td><input name="s2_cake" type="text"></td>
+        <td><input name="s2_sand" type="text"></td>
+        <td><input name="s2_ph" type="text"></td>
+        <td><input name="s2_cl" type="text"></td>
+        <td><input name="s2_ca" type="text"></td>
+      </tr>
+      <tr id="sample_3">
+        <td>#3</td>
+        <td><input name="s3_density" type="text"></td>
+        <td><input name="s3_funnel" type="text"></td>
+        <td><input name="s3_av" type="text"></td>
+        <td><input name="s3_pv" type="text"></td>
+        <td><input name="s3_yp" type="text"></td>
+        <td><input name="s3_filtration" type="text"></td>
+        <td><input name="s3_cake" type="text"></td>
+        <td><input name="s3_sand" type="text"></td>
+        <td><input name="s3_ph" type="text"></td>
+        <td><input name="s3_cl" type="text"></td>
+        <td><input name="s3_ca" type="text"></td>
+      </tr>
+      <tr id="sample_4">
+        <td>#4</td>
+        <td><input name="s4_density" type="text"></td>
+        <td><input name="s4_funnel" type="text"></td>
+        <td><input name="s4_av" type="text"></td>
+        <td><input name="s4_pv" type="text"></td>
+        <td><input name="s4_yp" type="text"></td>
+        <td><input name="s4_filtration" type="text"></td>
+        <td><input name="s4_cake" type="text"></td>
+        <td><input name="s4_sand" type="text"></td>
+        <td><input name="s4_ph" type="text"></td>
+        <td><input name="s4_cl" type="text"></td>
+        <td><input name="s4_ca" type="text"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 当日材料表 -->
+  <div class="section-title">当日材料消耗</div>
+  <table id="materials_table">
+    <thead>
+      <tr><th>材料代号</th><th>单位</th><th>数量</th></tr>
+    </thead>
+    <tbody id="materials_body">
+      <tr><td><input name="mat_code_1" type="text"></td><td><input name="mat_unit_1" type="text"></td><td><input name="mat_qty_1" type="text"></td></tr>
+      <tr><td><input name="mat_code_2" type="text"></td><td><input name="mat_unit_2" type="text"></td><td><input name="mat_qty_2" type="text"></td></tr>
+      <tr><td><input name="mat_code_3" type="text"></td><td><input name="mat_unit_3" type="text"></td><td><input name="mat_qty_3" type="text"></td></tr>
+      <tr><td><input name="mat_code_4" type="text"></td><td><input name="mat_unit_4" type="text"></td><td><input name="mat_qty_4" type="text"></td></tr>
+      <tr><td><input name="mat_code_5" type="text"></td><td><input name="mat_unit_5" type="text"></td><td><input name="mat_qty_5" type="text"></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 长文本 -->
+  <div class="section-title">工程作业简况</div>
+  <textarea id="engineering_summary" name="engineering_summary" rows="4" placeholder="请输入工程作业简况"></textarea>
+
+  <div class="section-title">钻井液处理与维护</div>
+  <textarea id="treatment_log" name="treatment_log" rows="4" placeholder="请输入钻井液处理与维护情况"></textarea>
+
+  <!-- 按钮 -->
+  <div class="btn-row">
+    <button class="btn btn-primary" id="btn_save" type="button" onclick="doSave()">保存</button>
+    <button class="btn btn-success" id="btn_submit" type="button" onclick="doSubmit()">提交</button>
+    <button class="btn btn-danger" id="btn_reset" type="button" onclick="doReset()">重置</button>
+  </div>
+
+  <div id="status-bar"></div>
+</div>
+
+<script>
+function showStatus(msg, type) {
+  var bar = document.getElementById('status-bar');
+  bar.style.display = 'block';
+  bar.textContent = msg;
+  bar.style.background = type === 'success' ? '#f6ffed' : '#fff2f0';
+  bar.style.borderColor = type === 'success' ? '#b7eb8f' : '#ffccc7';
+}
+function doSave() {
+  showStatus('数据已保存（模拟）', 'success');
+}
+function doSubmit() {
+  showStatus('⚠️ POC 模拟：不允许自动提交', 'error');
+}
+function doReset() {
+  document.querySelectorAll('input, textarea').forEach(function(el) { el.value = ''; });
+  document.querySelectorAll('select').forEach(function(el) { el.selectedIndex = 0; });
+  showStatus('表单已重置', 'success');
+}
+</script>
+</body>
+</html>

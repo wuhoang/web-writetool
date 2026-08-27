@@ -132,7 +132,7 @@ solids_control_table:
   columns:
     equipment: [设备名称]
     screen: [筛布]
-    hours: ["时间,h", "时间,h", 时间]
+    hours: ["时间,h", 时间]
 
 narrative_sections:
   engineering_summary: 工程作业简况

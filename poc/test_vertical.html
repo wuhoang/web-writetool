@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>垂直布局表单 — 标签在上</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Microsoft YaHei", sans-serif; background: #f5f5f5; padding: 24px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { text-align: center; margin-bottom: 24px; font-size: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .field label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
+  .field input, .field select { width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; }
+  .field input:focus, .field select:focus { border-color: #1890ff; outline: none; }
+  .section { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .section h2 { font-size: 15px; color: #1890ff; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e8e8e8; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid #e8e8e8; padding: 6px 8px; text-align: center; font-size: 13px; }
+  th { background: #fafafa; }
+  td input { width: 100%; border: 1px solid transparent; padding: 4px; text-align: center; }
+  td input:focus { border-color: #1890ff; background: #e6f7ff; }
+  textarea { width: 100%; min-height: 80px; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; resize: vertical; }
+  .wide { grid-column: span 2; }
+  .full { grid-column: span 4; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>钻井液日报填写（垂直布局）</h1>
+
+  <!-- 基本信息 -->
+  <div class="section">
+    <h2>基本信息</h2>
+    <div class="grid">
+      <div class="field"><label>井号</label><input id="well_name" name="well_name" type="text"></div>
+      <div class="field"><label>日期</label><input id="report_date" name="report_date" type="text"></div>
+      <div class="field"><label>油田</label><input id="oilfield" name="oilfield" type="text"></div>
+      <div class="field"><label>区域</label><input id="region" name="region" type="text"></div>
+      <div class="field"><label>钻机</label><input id="rig" name="rig" type="text"></div>
+      <div class="field"><label>作业者</label><input id="operator" name="operator" type="text"></div>
+      <div class="field"><label>作业者代表</label><input id="operator_rep" name="operator_rep" type="text"></div>
+      <div class="field"><label>软件编号</label><input id="software_no" name="software_no" type="text"></div>
+    </div>
+  </div>
+
+  <!-- 井况 -->
+  <div class="section">
+    <h2>井况信息</h2>
+    <div class="grid">
+      <div class="field"><label>井别</label>
+        <select id="well_type" name="well_type">
+          <option value="">-- 请选择 --</option>
+          <option value="探井">探井</option>
+          <option value="评价井">评价井</option>
+          <option value="开发井">开发井</option>
+          <option value="调整井">调整井</option>
+        </select>
+      </div>
+      <div class="field"><label>钻井液类型</label>
+        <select id="fluid_type" name="fluid_type">
+          <option value="">-- 请选择 --</option>
+          <option value="改进型 PEC">改进型 PEC</option>
+          <option value="PEC">PEC</option>
+          <option value="水基">水基</option>
+          <option value="油基">油基</option>
+        </select>
+      </div>
+      <div class="field"><label>当前工况</label>
+        <select id="current_operation" name="current_operation">
+          <option value="">-- 请选择 --</option>
+          <option value="纯钻进">纯钻进</option>
+          <option value="起钻">起钻</option>
+          <option value="下钻">下钻</option>
+          <option value="循环">循环</option>
+          <option value="测井">测井</option>
+          <option value="固井">固井</option>
+        </select>
+      </div>
+      <div class="field"><label>测深(m)</label><input id="measured_depth" name="measured_depth" type="text"></div>
+      <div class="field"><label>垂深(m)</label><input id="tvd" name="tvd" type="text"></div>
+      <div class="field"><label>水深(m)</label><input id="water_depth" name="water_depth" type="text"></div>
+      <div class="field"><label>补心海拔(m)</label><input id="kb_elevation" name="kb_elevation" type="text"></div>
+      <div class="field"><label>开钻日期</label><input id="spud_date" name="spud_date" type="text"></div>
+      <div class="field"><label>井段</label><input id="hole_section" name="hole_section" type="text"></div>
+    </div>
+  </div>
+
+  <!-- 钻井液性能 -->
+  <div class="section">
+    <h2>钻井液性能</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>取样点</th><th>密度(g/cm³)</th><th>漏斗粘度(s)</th>
+          <th>AV(mPa·s)</th><th>PV(mPa·s)</th><th>YP(Pa)</th>
+          <th>API失水(mL)</th><th>泥饼(mm)</th><th>含砂(%)</th>
+          <th>pH</th><th>氯根(mg/L)</th><th>钙(mg/L)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#1</td>
+          <td><input id="s1_density" type="text"></td>
+          <td><input id="s1_funnel" type="text"></td>
+          <td><input id="s1_av" type="text"></td>
+          <td><input id="s1_pv" type="text"></td>
+          <td><input id="s1_yp" type="text"></td>
+          <td><input id="s1_filtration" type="text"></td>
+          <td><input id="s1_cake" type="text"></td>
+          <td><input id="s1_sand" type="text"></td>
+          <td><input id="s1_ph" type="text"></td>
+          <td><input id="s1_cl" type="text"></td>
+          <td><input id="s1_ca" type="text"></td>
+        </tr>
+        <tr>
+          <td>#2</td>
+          <td><input id="s2_density" type="text"></td>
+          <td><input id="s2_funnel" type="text"></td>
+          <td><input id="s2_av" type="text"></td>
+          <td><input id="s2_pv" type="text"></td>
+          <td><input id="s2_yp" type="text"></td>
+          <td><input id="s2_filtration" type="text"></td>
+          <td><input id="s2_cake" type="text"></td>
+          <td><input id="s2_sand" type="text"></td>
+          <td><input id="s2_ph" type="text"></td>
+          <td><input id="s2_cl" type="text"></td>
+          <td><input id="s2_ca" type="text"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 长文本 -->
+  <div class="section">
+    <h2>工程作业简况</h2>
+    <textarea id="engineering_summary" name="engineering_summary"></textarea>
+  </div>
+
+  <div class="section">
+    <h2>钻井液处理与维护</h2>
+    <textarea id="treatment_log" name="treatment_log"></textarea>
+  </div>
+
+</div>
+</body>
+</html>

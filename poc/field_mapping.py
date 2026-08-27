@@ -156,7 +156,7 @@ def map_fluid_properties(sections: list[Section], rules: dict) -> tuple[dict, li
         if name in profile["sample_columns"]:
             col_map[band_idx] = name
     label_col = 0
-    unit_col = 1 if len(header) > max(col_map, default=0) else None
+    unit_col = 1 if len(header) > 1 else None
 
     alias_to_field: dict[str, str] = {}
     for fid, aliases in profile["row_aliases"].items():

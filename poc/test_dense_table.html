@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>密集表格布局 — table_cell 定位测试</title>
+<style>
+  body { font-family: "SimSun", "NSimSun", serif; background: #fff; padding: 10px; font-size: 13px; }
+  h2 { text-align: center; font-size: 16px; margin-bottom: 8px; }
+  .subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  th, td { border: 1px solid #000; padding: 3px 5px; text-align: center; font-size: 12px; }
+  th { background: #f0f0f0; font-weight: bold; }
+  .label-cell { background: #f8f8f8; text-align: right; padding-right: 6px; font-weight: bold; white-space: nowrap; }
+  .input-cell { padding: 1px 2px; }
+  .input-cell input { width: 100%; border: none; padding: 2px; text-align: center; font-size: 12px; background: transparent; }
+  .input-cell input:focus { background: #ffffcc; outline: 1px solid #000; }
+  .section-header { background: #4472c4; color: #fff; font-weight: bold; font-size: 13px; }
+  .section-header2 { background: #5b9bd5; color: #fff; font-weight: bold; font-size: 12px; }
+  textarea { width: 100%; border: 1px solid #000; padding: 4px; font-size: 12px; font-family: "SimSun", serif; }
+  .footer { font-size: 11px; color: #666; margin-top: 8px; }
+  .narrow { width: 50px; }
+  .medium { width: 80px; }
+  .wide { width: 120px; }
+</style>
+</head>
+<body>
+
+<h2>钻井液日报</h2>
+<div class="subtitle">（密集表格布局 — 仿纸质表单样式）</div>
+
+<!-- 基本信息：纯表格布局，无 div -->
+<table>
+  <tr>
+    <td class="label-cell" style="width:70px">井号</td>
+    <td class="input-cell" style="width:140px"><input id="well_name" name="well_name" type="text"></td>
+    <td class="label-cell" style="width:60px">日期</td>
+    <td class="input-cell" style="width:120px"><input id="report_date" name="report_date" type="text"></td>
+    <td class="label-cell" style="width:50px">油田</td>
+    <td class="input-cell" style="width:120px"><input id="oilfield" name="oilfield" type="text"></td>
+    <td class="label-cell" style="width:50px">区域</td>
+    <td class="input-cell"><input id="region" name="region" type="text"></td>
+  </tr>
+  <tr>
+    <td class="label-cell">钻机</td>
+    <td class="input-cell"><input id="rig" name="rig" type="text"></td>
+    <td class="label-cell">作业者</td>
+    <td class="input-cell"><input id="operator" name="operator" type="text"></td>
+    <td class="label-cell">代表</td>
+    <td class="input-cell"><input id="operator_rep" name="operator_rep" type="text"></td>
+    <td class="label-cell">软件编号</td>
+    <td class="input-cell"><input id="software_no" name="software_no" type="text"></td>
+  </tr>
+  <tr>
+    <td class="label-cell">井别</td>
+    <td class="input-cell">
+      <select id="well_type" name="well_type" style="width:100%;border:none;font-size:12px">
+        <option value="">--</option>
+        <option value="探井">探井</option>
+        <option value="评价井">评价井</option>
+        <option value="开发井">开发井</option>
+        <option value="调整井">调整井</option>
+      </select>
+    </td>
+    <td class="label-cell">钻井液</td>
+    <td class="input-cell">
+      <select id="fluid_type" name="fluid_type" style="width:100%;border:none;font-size:12px">
+        <option value="">--</option>
+        <option value="改进型 PEC">改进型 PEC</option>
+        <option value="PEC">PEC</option>
+        <option value="水基">水基</option>
+        <option value="油基">油基</option>
+      </select>
+    </td>
+    <td class="label-cell">工况</td>
+    <td class="input-cell">
+      <select id="current_operation" name="current_operation" style="width:100%;border:none;font-size:12px">
+        <option value="">--</option>
+        <option value="纯钻进">纯钻进</option>
+        <option value="起钻">起钻</option>
+        <option value="下钻">下钻</option>
+        <option value="循环">循环</option>
+        <option value="测井">测井</option>
+        <option value="固井">固井</option>
+      </select>
+    </td>
+    <td class="label-cell">测深(m)</td>
+    <td class="input-cell"><input id="measured_depth" name="measured_depth" type="text"></td>
+  </tr>
+  <tr>
+    <td class="label-cell">垂深(m)</td>
+    <td class="input-cell"><input id="tvd" name="tvd" type="text"></td>
+    <td class="label-cell">水深(m)</td>
+    <td class="input-cell"><input id="water_depth" name="water_depth" type="text"></td>
+    <td class="label-cell">补心海拔</td>
+    <td class="input-cell"><input id="kb_elevation" name="kb_elevation" type="text"></td>
+    <td class="label-cell">开钻日期</td>
+    <td class="input-cell"><input id="spud_date" name="spud_date" type="text"></td>
+  </tr>
+  <tr>
+    <td class="label-cell">井段</td>
+    <td class="input-cell" colspan="3"><input id="hole_section" name="hole_section" type="text" style="text-align:left"></td>
+    <td class="label-cell" colspan="2"></td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+<!-- 钻井液性能表 -->
+<table>
+  <tr><td colspan="13" class="section-header">钻井液性能参数</td></tr>
+  <tr>
+    <th>取样点</th><th>密度<br>(g/cm³)</th><th>漏斗粘度<br>(s)</th>
+    <th>AV<br>(mPa·s)</th><th>PV<br>(mPa·s)</th><th>YP<br>(Pa)</th>
+    <th>API失水<br>(mL)</th><th>泥饼<br>(mm)</th><th>含砂<br>(%)</th>
+    <th>pH</th><th>氯根<br>(mg/L)</th><th>钙<br>(mg/L)</th>
+  </tr>
+  <tr>
+    <td>#1</td>
+    <td class="input-cell"><input id="s1_density" type="text"></td>
+    <td class="input-cell"><input id="s1_funnel" type="text"></td>
+    <td class="input-cell"><input id="s1_av" type="text"></td>
+    <td class="input-cell"><input id="s1_pv" type="text"></td>
+    <td class="input-cell"><input id="s1_yp" type="text"></td>
+    <td class="input-cell"><input id="s1_filtration" type="text"></td>
+    <td class="input-cell"><input id="s1_cake" type="text"></td>
+    <td class="input-cell"><input id="s1_sand" type="text"></td>
+    <td class="input-cell"><input id="s1_ph" type="text"></td>
+    <td class="input-cell"><input id="s1_cl" type="text"></td>
+    <td class="input-cell"><input id="s1_ca" type="text"></td>
+  </tr>
+  <tr>
+    <td>#2</td>
+    <td class="input-cell"><input id="s2_density" type="text"></td>
+    <td class="input-cell"><input id="s2_funnel" type="text"></td>
+    <td class="input-cell"><input id="s2_av" type="text"></td>
+    <td class="input-cell"><input id="s2_pv" type="text"></td>
+    <td class="input-cell"><input id="s2_yp" type="text"></td>
+    <td class="input-cell"><input id="s2_filtration" type="text"></td>
+    <td class="input-cell"><input id="s2_cake" type="text"></td>
+    <td class="input-cell"><input id="s2_sand" type="text"></td>
+    <td class="input-cell"><input id="s2_ph" type="text"></td>
+    <td class="input-cell"><input id="s2_cl" type="text"></td>
+    <td class="input-cell"><input id="s2_ca" type="text"></td>
+  </tr>
+  <tr>
+    <td>#3</td>
+    <td class="input-cell"><input id="s3_density" type="text"></td>
+    <td class="input-cell"><input id="s3_funnel" type="text"></td>
+    <td class="input-cell"><input id="s3_av" type="text"></td>
+    <td class="input-cell"><input id="s3_pv" type="text"></td>
+    <td class="input-cell"><input id="s3_yp" type="text"></td>
+    <td class="input-cell"><input id="s3_filtration" type="text"></td>
+    <td class="input-cell"><input id="s3_cake" type="text"></td>
+    <td class="input-cell"><input id="s3_sand" type="text"></td>
+    <td class="input-cell"><input id="s3_ph" type="text"></td>
+    <td class="input-cell"><input id="s3_cl" type="text"></td>
+    <td class="input-cell"><input id="s3_ca" type="text"></td>
+  </tr>
+  <tr>
+    <td>#4</td>
+    <td class="input-cell"><input id="s4_density" type="text"></td>
+    <td class="input-cell"><input id="s4_funnel" type="text"></td>
+    <td class="input-cell"><input id="s4_av" type="text"></td>
+    <td class="input-cell"><input id="s4_pv" type="text"></td>
+    <td class="input-cell"><input id="s4_yp" type="text"></td>
+    <td class="input-cell"><input id="s4_filtration" type="text"></td>
+    <td class="input-cell"><input id="s4_cake" type="text"></td>
+    <td class="input-cell"><input id="s4_sand" type="text"></td>
+    <td class="input-cell"><input id="s4_ph" type="text"></td>
+    <td class="input-cell"><input id="s4_cl" type="text"></td>
+    <td class="input-cell"><input id="s4_ca" type="text"></td>
+  </tr>
+</table>
+
+<!-- 材料消耗表 -->
+<table>
+  <tr><td colspan="4" class="section-header">当日材料消耗</td></tr>
+  <tr>
+    <th style="width:40px">序号</th><th>材料代号</th><th style="width:60px">单位</th><th style="width:80px">数量</th>
+  </tr>
+  <tr><td>1</td><td class="input-cell"><input name="mat_code_1" type="text"></td><td class="input-cell"><input name="mat_unit_1" type="text"></td><td class="input-cell"><input name="mat_qty_1" type="text"></td></tr>
+  <tr><td>2</td><td class="input-cell"><input name="mat_code_2" type="text"></td><td class="input-cell"><input name="mat_unit_2" type="text"></td><td class="input-cell"><input name="mat_qty_2" type="text"></td></tr>
+  <tr><td>3</td><td class="input-cell"><input name="mat_code_3" type="text"></td><td class="input-cell"><input name="mat_unit_3" type="text"></td><td class="input-cell"><input name="mat_qty_3" type="text"></td></tr>
+  <tr><td>4</td><td class="input-cell"><input name="mat_code_4" type="text"></td><td class="input-cell"><input name="mat_unit_4" type="text"></td><td class="input-cell"><input name="mat_qty_4" type="text"></td></tr>
+  <tr><td>5</td><td class="input-cell"><input name="mat_code_5" type="text"></td><td class="input-cell"><input name="mat_unit_5" type="text"></td><td class="input-cell"><input name="mat_qty_5" type="text"></td></tr>
+</table>
+
+<!-- 长文本 -->
+<table>
+  <tr><td class="section-header">工程作业简况</td></tr>
+  <tr><td style="padding:4px"><textarea id="engineering_summary" name="engineering_summary" rows="3"></textarea></td></tr>
+</table>
+
+<table>
+  <tr><td class="section-header">钻井液处理与维护</td></tr>
+  <tr><td style="padding:4px"><textarea id="treatment_log" name="treatment_log" rows="3"></textarea></td></tr>
+</table>
+
+<div class="footer">
+  填表人：________ 　审核人：________ 　日期：________
+</div>
+
+</body>
+</html>

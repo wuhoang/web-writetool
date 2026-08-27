@@ -9,3 +9,4 @@ build/
 *.pdf
 !report_data.pdf
 poc/output/
+.chrome-debug-profile/

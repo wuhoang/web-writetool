@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>无ID属性表单 — by_name策略测试</title>
+<style>
+  body { font-family: SimSun, serif; background: #e8e8e8; padding: 16px; }
+  .panel { background: #fff; border: 1px solid #999; padding: 12px; margin-bottom: 16px; }
+  .row { margin-bottom: 8px; }
+  .row label { display: inline-block; width: 90px; font-size: 14px; }
+  .row input, .row select { padding: 3px 6px; border: 1px solid #aaa; font-size: 14px; width: 160px; }
+  textarea { width: 100%; height: 60px; border: 1px solid #aaa; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid #aaa; padding: 4px 6px; font-size: 13px; text-align: center; }
+  th { background: #d0d0d0; }
+  td input { width: 80px; border: 1px solid #ccc; text-align: center; font-size: 13px; }
+</style>
+</head>
+<body>
+<h2 style="text-align:center">钻井液日报（无ID测试页）</h2>
+
+<div class="panel">
+  <p><b>注意：</b>此页面所有表单元素均无 id 属性，仅有 name 属性。用于测试 by_name 定位策略。</p>
+</div>
+
+<div class="panel">
+  <b>■ 基本信息</b>
+  <div class="row"><label>井号：</label><input name="well_name" type="text"></div>
+  <div class="row"><label>日期：</label><input name="report_date" type="text"></div>
+  <div class="row"><label>油田：</label><input name="oilfield" type="text"></div>
+  <div class="row"><label>区域：</label><input name="region" type="text"></div>
+  <div class="row"><label>钻机：</label><input name="rig" type="text"></div>
+  <div class="row"><label>作业者：</label><input name="operator" type="text"></div>
+  <div class="row"><label>代表：</label><input name="operator_rep" type="text"></div>
+  <div class="row"><label>软件编号：</label><input name="software_no" type="text"></div>
+</div>
+
+<div class="panel">
+  <b>■ 井况信息</b>
+  <div class="row"><label>井别：</label>
+    <select name="well_type">
+      <option value="">--</option>
+      <option value="探井">探井</option>
+      <option value="评价井">评价井</option>
+      <option value="开发井">开发井</option>
+      <option value="调整井">调整井</option>
+    </select>
+  </div>
+  <div class="row"><label>钻井液类型：</label>
+    <select name="fluid_type">
+      <option value="">--</option>
+      <option value="改进型 PEC">改进型 PEC</option>
+      <option value="PEC">PEC</option>
+      <option value="水基">水基</option>
+      <option value="油基">油基</option>
+    </select>
+  </div>
+  <div class="row"><label>当前工况：</label>
+    <select name="current_operation">
+      <option value="">--</option>
+      <option value="纯钻进">纯钻进</option>
+      <option value="起钻">起钻</option>
+      <option value="下钻">下钻</option>
+      <option value="循环">循环</option>
+      <option value="测井">测井</option>
+      <option value="固井">固井</option>
+    </select>
+  </div>
+  <div class="row"><label>测深(m)：</label><input name="measured_depth" type="text"></div>
+  <div class="row"><label>垂深(m)：</label><input name="tvd" type="text"></div>
+  <div class="row"><label>水深(m)：</label><input name="water_depth" type="text"></div>
+  <div class="row"><label>补心海拔：</label><input name="kb_elevation" type="text"></div>
+  <div class="row"><label>开钻日期：</label><input name="spud_date" type="text"></div>
+  <div class="row"><label>井段：</label><input name="hole_section" type="text"></div>
+</div>
+
+<div class="panel">
+  <b>■ 钻井液性能</b>
+  <table>
+    <tr>
+      <th>取样点</th><th>密度</th><th>漏斗粘度</th><th>AV</th><th>PV</th><th>YP</th>
+      <th>API失水</th><th>泥饼</th><th>含砂</th><th>pH</th><th>氯根</th><th>钙</th>
+    </tr>
+    <tr>
+      <td>#1</td>
+      <td><input name="s1_density" type="text"></td>
+      <td><input name="s1_funnel" type="text"></td>
+      <td><input name="s1_av" type="text"></td>
+      <td><input name="s1_pv" type="text"></td>
+      <td><input name="s1_yp" type="text"></td>
+      <td><input name="s1_filtration" type="text"></td>
+      <td><input name="s1_cake" type="text"></td>
+      <td><input name="s1_sand" type="text"></td>
+      <td><input name="s1_ph" type="text"></td>
+      <td><input name="s1_cl" type="text"></td>
+      <td><input name="s1_ca" type="text"></td>
+    </tr>
+  </table>
+</div>
+
+<div class="panel">
+  <b>■ 工程作业简况</b><br>
+  <textarea name="engineering_summary"></textarea>
+</div>
+
+<div class="panel">
+  <b>■ 钻井液处理与维护</b><br>
+  <textarea name="treatment_log"></textarea>
+</div>
+
+</body>
+</html>

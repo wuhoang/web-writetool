@@ -1,0 +1,162 @@
+# UI 字段映射配置 — by_label 策略（用于无 id 属性的页面）
+# 通过标签文本定位：找到"井号："→ 取其右侧最近的输入框
+
+test_no_id:
+  url: "poc/test_no_id.html"
+
+  fields:
+    well_name:
+      locator: { strategy: by_label, target: "井号" }
+      control_type: input
+      model_path: meta.well_name.raw_text
+
+    report_date:
+      locator: { strategy: by_label, target: "日期" }
+      control_type: input
+      model_path: meta.report_date.raw_text
+
+    oilfield:
+      locator: { strategy: by_label, target: "油田" }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+
+    region:
+      locator: { strategy: by_label, target: "区域" }
+      control_type: input
+      model_path: meta.region.raw_text
+
+    rig:
+      locator: { strategy: by_label, target: "钻机" }
+      control_type: input
+      model_path: meta.rig.raw_text
+
+    operator:
+      locator: { strategy: by_label, target: "作业者" }
+      control_type: input
+      model_path: meta.operator.raw_text
+
+    operator_rep:
+      locator: { strategy: by_label, target: "代表" }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+
+    software_no:
+      locator: { strategy: by_label, target: "软件编号" }
+      control_type: input
+      model_path: meta.software_no.raw_text
+
+    well_type:
+      locator: { strategy: by_label, target: "井别" }
+      control_type: select
+      option_index: 2
+      options: ["--", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+
+    fluid_type:
+      locator: { strategy: by_label, target: "钻井液类型" }
+      control_type: select
+      option_index: 1
+      options: ["--", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+
+    current_operation:
+      locator: { strategy: by_label, target: "当前工况" }
+      control_type: select
+      option_index: 1
+      options: ["--", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+
+    measured_depth:
+      locator: { strategy: by_label, target: "测深" }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+
+    tvd:
+      locator: { strategy: by_label, target: "垂深" }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+
+    water_depth:
+      locator: { strategy: by_label, target: "水深" }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+
+    kb_elevation:
+      locator: { strategy: by_label, target: "补心海拔" }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+
+    spud_date:
+      locator: { strategy: by_label, target: "开钻日期" }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+
+    hole_section:
+      locator: { strategy: by_label, target: "井段" }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+
+    s1_density:
+      locator: { strategy: by_label, target: "密度" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+
+    s1_funnel:
+      locator: { strategy: by_label, target: "漏斗粘度" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+
+    s1_av:
+      locator: { strategy: by_label, target: "AV" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+
+    s1_pv:
+      locator: { strategy: by_label, target: "PV" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+
+    s1_yp:
+      locator: { strategy: by_label, target: "YP" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+
+    s1_filtration:
+      locator: { strategy: by_label, target: "API失水" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+
+    s1_cake:
+      locator: { strategy: by_label, target: "泥饼" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+
+    s1_sand:
+      locator: { strategy: by_label, target: "含砂" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+
+    s1_ph:
+      locator: { strategy: by_label, target: "pH" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+
+    s1_cl:
+      locator: { strategy: by_label, target: "氯根" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+
+    s1_ca:
+      locator: { strategy: by_label, target: "钙" }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+
+    engineering_summary:
+      locator: { strategy: by_label, target: "工程作业简况" }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+
+    treatment_log:
+      locator: { strategy: by_label, target: "钻井液处理与维护" }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text

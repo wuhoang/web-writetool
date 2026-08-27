@@ -1,0 +1,695 @@
+# UI 字段映射配置 — POC-2 模拟页面
+# locator: 定位策略（by_id / by_name）
+# control_type: 控件类型（input / select / textarea / table_cell）
+# option_index: HTML <select> 的 option 序号（从 0 开始，包含空白默认项）
+
+test_page:
+  url: "poc/test_page.html"
+
+  fields:
+    # ─── 基本信息 ───
+    well_name:
+      locator: { strategy: by_id, target: well_name }
+      control_type: input
+      model_path: meta.well_name.raw_text
+
+    report_date:
+      locator: { strategy: by_id, target: report_date }
+      control_type: input
+      model_path: meta.report_date.raw_text
+
+    oilfield:
+      locator: { strategy: by_id, target: oilfield }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+
+    region:
+      locator: { strategy: by_id, target: region }
+      control_type: input
+      model_path: meta.region.raw_text
+
+    rig:
+      locator: { strategy: by_id, target: rig }
+      control_type: input
+      model_path: meta.rig.raw_text
+
+    operator:
+      locator: { strategy: by_id, target: operator }
+      control_type: input
+      model_path: meta.operator.raw_text
+
+    operator_rep:
+      locator: { strategy: by_id, target: operator_rep }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+
+    software_no:
+      locator: { strategy: by_id, target: software_no }
+      control_type: input
+      model_path: meta.software_no.raw_text
+
+    well_type:
+      locator: { strategy: by_id, target: well_type }
+      control_type: select
+      option_index: 2  # 0=请选择, 1=探井, 2=评价井, 3=开发井, 4=调整井
+      options: ["-- 请选择 --", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+
+    fluid_type:
+      locator: { strategy: by_id, target: fluid_type }
+      control_type: select
+      option_index: 1  # 0=请选择, 1=改进型 PEC, 2=PEC, 3=水基, 4=油基
+      options: ["-- 请选择 --", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+
+    current_operation:
+      locator: { strategy: by_id, target: current_operation }
+      control_type: select
+      option_index: 1  # 0=请选择, 1=纯钻进, 2=起钻, 3=下钻, 4=循环, 5=测井, 6=固井
+      options: ["-- 请选择 --", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+
+    measured_depth:
+      locator: { strategy: by_id, target: measured_depth }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+
+    tvd:
+      locator: { strategy: by_id, target: tvd }
+      control_type: input
+      model_path: meta.measured_depth.raw_text  # 同测深，POC 简化
+
+    water_depth:
+      locator: { strategy: by_id, target: water_depth }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+
+    kb_elevation:
+      locator: { strategy: by_id, target: kb_elevation }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+
+    spud_date:
+      locator: { strategy: by_id, target: spud_date }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+
+    hole_section:
+      locator: { strategy: by_id, target: hole_section }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+
+    # ─── 钻井液性能表（取样点 #1）───
+    s1_density:
+      locator: { strategy: by_id, target: s1_density }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+
+    s1_funnel:
+      locator: { strategy: by_id, target: s1_funnel }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+
+    s1_av:
+      locator: { strategy: by_id, target: s1_av }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+
+    s1_pv:
+      locator: { strategy: by_id, target: s1_pv }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+
+    s1_yp:
+      locator: { strategy: by_id, target: s1_yp }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+
+    s1_filtration:
+      locator: { strategy: by_id, target: s1_filtration }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+
+    s1_cake:
+      locator: { strategy: by_id, target: s1_cake }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+
+    s1_sand:
+      locator: { strategy: by_id, target: s1_sand }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+
+    s1_ph:
+      locator: { strategy: by_id, target: s1_ph }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+
+    s1_cl:
+      locator: { strategy: by_id, target: s1_cl }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+
+    s1_ca:
+      locator: { strategy: by_id, target: s1_ca }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+
+    # ─── 长文本 ───
+    engineering_summary:
+      locator: { strategy: by_id, target: engineering_summary }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+
+    treatment_log:
+      locator: { strategy: by_id, target: treatment_log }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text
+
+
+# ─── 测试页 2: 无 ID 属性（by_name 策略）───
+test_no_id:
+  url: "poc/test_no_id.html"
+  fields:
+    well_name:
+      locator: { strategy: by_name, target: well_name }
+      control_type: input
+      model_path: meta.well_name.raw_text
+    report_date:
+      locator: { strategy: by_name, target: report_date }
+      control_type: input
+      model_path: meta.report_date.raw_text
+    oilfield:
+      locator: { strategy: by_name, target: oilfield }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+    region:
+      locator: { strategy: by_name, target: region }
+      control_type: input
+      model_path: meta.region.raw_text
+    rig:
+      locator: { strategy: by_name, target: rig }
+      control_type: input
+      model_path: meta.rig.raw_text
+    operator:
+      locator: { strategy: by_name, target: operator }
+      control_type: input
+      model_path: meta.operator.raw_text
+    operator_rep:
+      locator: { strategy: by_name, target: operator_rep }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+    software_no:
+      locator: { strategy: by_name, target: software_no }
+      control_type: input
+      model_path: meta.software_no.raw_text
+    well_type:
+      locator: { strategy: by_name, target: well_type }
+      control_type: select
+      option_index: 2
+      options: ["--", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+    fluid_type:
+      locator: { strategy: by_name, target: fluid_type }
+      control_type: select
+      option_index: 1
+      options: ["--", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+    current_operation:
+      locator: { strategy: by_name, target: current_operation }
+      control_type: select
+      option_index: 1
+      options: ["--", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+    measured_depth:
+      locator: { strategy: by_name, target: measured_depth }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    tvd:
+      locator: { strategy: by_name, target: tvd }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    water_depth:
+      locator: { strategy: by_name, target: water_depth }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+    kb_elevation:
+      locator: { strategy: by_name, target: kb_elevation }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+    spud_date:
+      locator: { strategy: by_name, target: spud_date }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+    hole_section:
+      locator: { strategy: by_name, target: hole_section }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+    s1_density:
+      locator: { strategy: by_name, target: s1_density }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+    s1_funnel:
+      locator: { strategy: by_name, target: s1_funnel }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+    s1_av:
+      locator: { strategy: by_name, target: s1_av }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+    s1_pv:
+      locator: { strategy: by_name, target: s1_pv }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+    s1_yp:
+      locator: { strategy: by_name, target: s1_yp }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+    s1_filtration:
+      locator: { strategy: by_name, target: s1_filtration }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+    s1_cake:
+      locator: { strategy: by_name, target: s1_cake }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+    s1_sand:
+      locator: { strategy: by_name, target: s1_sand }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+    s1_ph:
+      locator: { strategy: by_name, target: s1_ph }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+    s1_cl:
+      locator: { strategy: by_name, target: s1_cl }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+    s1_ca:
+      locator: { strategy: by_name, target: s1_ca }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+    engineering_summary:
+      locator: { strategy: by_name, target: engineering_summary }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+    treatment_log:
+      locator: { strategy: by_name, target: treatment_log }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text
+
+
+# ─── 测试页 3: 垂直布局（标签在上，grid 布局）───
+test_vertical:
+  url: "poc/test_vertical.html"
+  fields:
+    well_name:
+      locator: { strategy: by_id, target: well_name }
+      control_type: input
+      model_path: meta.well_name.raw_text
+    report_date:
+      locator: { strategy: by_id, target: report_date }
+      control_type: input
+      model_path: meta.report_date.raw_text
+    oilfield:
+      locator: { strategy: by_id, target: oilfield }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+    region:
+      locator: { strategy: by_id, target: region }
+      control_type: input
+      model_path: meta.region.raw_text
+    rig:
+      locator: { strategy: by_id, target: rig }
+      control_type: input
+      model_path: meta.rig.raw_text
+    operator:
+      locator: { strategy: by_id, target: operator }
+      control_type: input
+      model_path: meta.operator.raw_text
+    operator_rep:
+      locator: { strategy: by_id, target: operator_rep }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+    software_no:
+      locator: { strategy: by_id, target: software_no }
+      control_type: input
+      model_path: meta.software_no.raw_text
+    well_type:
+      locator: { strategy: by_id, target: well_type }
+      control_type: select
+      option_index: 2
+      options: ["-- 请选择 --", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+    fluid_type:
+      locator: { strategy: by_id, target: fluid_type }
+      control_type: select
+      option_index: 1
+      options: ["-- 请选择 --", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+    current_operation:
+      locator: { strategy: by_id, target: current_operation }
+      control_type: select
+      option_index: 1
+      options: ["-- 请选择 --", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+    measured_depth:
+      locator: { strategy: by_id, target: measured_depth }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    tvd:
+      locator: { strategy: by_id, target: tvd }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    water_depth:
+      locator: { strategy: by_id, target: water_depth }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+    kb_elevation:
+      locator: { strategy: by_id, target: kb_elevation }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+    spud_date:
+      locator: { strategy: by_id, target: spud_date }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+    hole_section:
+      locator: { strategy: by_id, target: hole_section }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+    s1_density:
+      locator: { strategy: by_id, target: s1_density }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+    s1_funnel:
+      locator: { strategy: by_id, target: s1_funnel }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+    s1_av:
+      locator: { strategy: by_id, target: s1_av }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+    s1_pv:
+      locator: { strategy: by_id, target: s1_pv }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+    s1_yp:
+      locator: { strategy: by_id, target: s1_yp }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+    s1_filtration:
+      locator: { strategy: by_id, target: s1_filtration }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+    s1_cake:
+      locator: { strategy: by_id, target: s1_cake }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+    s1_sand:
+      locator: { strategy: by_id, target: s1_sand }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+    s1_ph:
+      locator: { strategy: by_id, target: s1_ph }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+    s1_cl:
+      locator: { strategy: by_id, target: s1_cl }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+    s1_ca:
+      locator: { strategy: by_id, target: s1_ca }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+    engineering_summary:
+      locator: { strategy: by_id, target: engineering_summary }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+    treatment_log:
+      locator: { strategy: by_id, target: treatment_log }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text
+
+
+# ─── 测试页 4: 仿真企业系统（tabs + sidebar + 复杂布局）───
+test_enterprise:
+  url: "poc/test_enterprise.html"
+  fields:
+    well_name:
+      locator: { strategy: by_id, target: well_name }
+      control_type: input
+      model_path: meta.well_name.raw_text
+    report_date:
+      locator: { strategy: by_id, target: report_date }
+      control_type: input
+      model_path: meta.report_date.raw_text
+    oilfield:
+      locator: { strategy: by_id, target: oilfield }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+    region:
+      locator: { strategy: by_id, target: region }
+      control_type: input
+      model_path: meta.region.raw_text
+    rig:
+      locator: { strategy: by_id, target: rig }
+      control_type: input
+      model_path: meta.rig.raw_text
+    operator:
+      locator: { strategy: by_id, target: operator }
+      control_type: input
+      model_path: meta.operator.raw_text
+    operator_rep:
+      locator: { strategy: by_id, target: operator_rep }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+    software_no:
+      locator: { strategy: by_id, target: software_no }
+      control_type: input
+      model_path: meta.software_no.raw_text
+    well_type:
+      locator: { strategy: by_id, target: well_type }
+      control_type: select
+      option_index: 2
+      options: ["请选择", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+    fluid_type:
+      locator: { strategy: by_id, target: fluid_type }
+      control_type: select
+      option_index: 1
+      options: ["请选择", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+    current_operation:
+      locator: { strategy: by_id, target: current_operation }
+      control_type: select
+      option_index: 1
+      options: ["请选择", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+    measured_depth:
+      locator: { strategy: by_id, target: measured_depth }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    tvd:
+      locator: { strategy: by_id, target: tvd }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    water_depth:
+      locator: { strategy: by_id, target: water_depth }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+    kb_elevation:
+      locator: { strategy: by_id, target: kb_elevation }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+    spud_date:
+      locator: { strategy: by_id, target: spud_date }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+    hole_section:
+      locator: { strategy: by_id, target: hole_section }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+    s1_density:
+      locator: { strategy: by_id, target: s1_density }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+    s1_funnel:
+      locator: { strategy: by_id, target: s1_funnel }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+    s1_av:
+      locator: { strategy: by_id, target: s1_av }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+    s1_pv:
+      locator: { strategy: by_id, target: s1_pv }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+    s1_yp:
+      locator: { strategy: by_id, target: s1_yp }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+    s1_filtration:
+      locator: { strategy: by_id, target: s1_filtration }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+    s1_cake:
+      locator: { strategy: by_id, target: s1_cake }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+    s1_sand:
+      locator: { strategy: by_id, target: s1_sand }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+    s1_ph:
+      locator: { strategy: by_id, target: s1_ph }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+    s1_cl:
+      locator: { strategy: by_id, target: s1_cl }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+    s1_ca:
+      locator: { strategy: by_id, target: s1_ca }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+    engineering_summary:
+      locator: { strategy: by_id, target: engineering_summary }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+    treatment_log:
+      locator: { strategy: by_id, target: treatment_log }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text
+
+
+# ─── 测试页 5: 密集表格布局（仿纸质表单）───
+test_dense_table:
+  url: "poc/test_dense_table.html"
+  fields:
+    well_name:
+      locator: { strategy: by_id, target: well_name }
+      control_type: input
+      model_path: meta.well_name.raw_text
+    report_date:
+      locator: { strategy: by_id, target: report_date }
+      control_type: input
+      model_path: meta.report_date.raw_text
+    oilfield:
+      locator: { strategy: by_id, target: oilfield }
+      control_type: input
+      model_path: meta.structure_oilfield.raw_text
+    region:
+      locator: { strategy: by_id, target: region }
+      control_type: input
+      model_path: meta.region.raw_text
+    rig:
+      locator: { strategy: by_id, target: rig }
+      control_type: input
+      model_path: meta.rig.raw_text
+    operator:
+      locator: { strategy: by_id, target: operator }
+      control_type: input
+      model_path: meta.operator.raw_text
+    operator_rep:
+      locator: { strategy: by_id, target: operator_rep }
+      control_type: input
+      model_path: meta.operator_representative.raw_text
+    software_no:
+      locator: { strategy: by_id, target: software_no }
+      control_type: input
+      model_path: meta.software_no.raw_text
+    well_type:
+      locator: { strategy: by_id, target: well_type }
+      control_type: select
+      option_index: 2
+      options: ["--", "探井", "评价井", "开发井", "调整井"]
+      model_path: meta.well_type.raw_text
+    fluid_type:
+      locator: { strategy: by_id, target: fluid_type }
+      control_type: select
+      option_index: 1
+      options: ["--", "改进型 PEC", "PEC", "水基", "油基"]
+      model_path: meta.fluid_type.raw_text
+    current_operation:
+      locator: { strategy: by_id, target: current_operation }
+      control_type: select
+      option_index: 1
+      options: ["--", "纯钻进", "起钻", "下钻", "循环", "测井", "固井"]
+      model_path: meta.current_operation.raw_text
+    measured_depth:
+      locator: { strategy: by_id, target: measured_depth }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    tvd:
+      locator: { strategy: by_id, target: tvd }
+      control_type: input
+      model_path: meta.measured_depth.raw_text
+    water_depth:
+      locator: { strategy: by_id, target: water_depth }
+      control_type: input
+      model_path: meta.water_depth_m.raw_text
+    kb_elevation:
+      locator: { strategy: by_id, target: kb_elevation }
+      control_type: input
+      model_path: meta.kb_elevation_m.raw_text
+    spud_date:
+      locator: { strategy: by_id, target: spud_date }
+      control_type: input
+      model_path: meta.spud_date.raw_text
+    hole_section:
+      locator: { strategy: by_id, target: hole_section }
+      control_type: input
+      model_path: meta.hole_section.raw_text
+    s1_density:
+      locator: { strategy: by_id, target: s1_density }
+      control_type: table_cell
+      model_path: fluid_properties.#1.density_gcm3.raw_text
+    s1_funnel:
+      locator: { strategy: by_id, target: s1_funnel }
+      control_type: table_cell
+      model_path: fluid_properties.#1.funnel_viscosity_s.raw_text
+    s1_av:
+      locator: { strategy: by_id, target: s1_av }
+      control_type: table_cell
+      model_path: fluid_properties.#1.av_mpas.raw_text
+    s1_pv:
+      locator: { strategy: by_id, target: s1_pv }
+      control_type: table_cell
+      model_path: fluid_properties.#1.pv_mpas.raw_text
+    s1_yp:
+      locator: { strategy: by_id, target: s1_yp }
+      control_type: table_cell
+      model_path: fluid_properties.#1.yp_pa.raw_text
+    s1_filtration:
+      locator: { strategy: by_id, target: s1_filtration }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_filtration_ml.raw_text
+    s1_cake:
+      locator: { strategy: by_id, target: s1_cake }
+      control_type: table_cell
+      model_path: fluid_properties.#1.api_cake_mm.raw_text
+    s1_sand:
+      locator: { strategy: by_id, target: s1_sand }
+      control_type: table_cell
+      model_path: fluid_properties.#1.sand_content_pct.raw_text
+    s1_ph:
+      locator: { strategy: by_id, target: s1_ph }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ph.raw_text
+    s1_cl:
+      locator: { strategy: by_id, target: s1_cl }
+      control_type: table_cell
+      model_path: fluid_properties.#1.cl_mgl.raw_text
+    s1_ca:
+      locator: { strategy: by_id, target: s1_ca }
+      control_type: table_cell
+      model_path: fluid_properties.#1.ca_mgl.raw_text
+    engineering_summary:
+      locator: { strategy: by_id, target: engineering_summary }
+      control_type: textarea
+      model_path: narratives.engineering_summary.raw_text
+    treatment_log:
+      locator: { strategy: by_id, target: treatment_log }
+      control_type: textarea
+      model_path: narratives.treatment_log.raw_text

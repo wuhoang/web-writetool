@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>XX油田管理系统 — 钻井液日报</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: "Microsoft YaHei", sans-serif; margin: 0; background: #eef1f5; font-size: 13px; }
+  /* 顶部导航 */
+  .topbar { background: #001529; color: #fff; padding: 0 20px; height: 48px; display: flex; align-items: center; }
+  .topbar .logo { font-size: 16px; font-weight: bold; margin-right: 40px; }
+  .topbar .nav-item { color: #ffffffa0; margin-right: 24px; cursor: pointer; font-size: 14px; }
+  .topbar .nav-item.active { color: #fff; border-bottom: 2px solid #1890ff; padding-bottom: 4px; }
+  .topbar .user { margin-left: auto; color: #ffffffa0; font-size: 12px; }
+  /* 面包屑 */
+  .breadcrumb { background: #fff; padding: 8px 20px; font-size: 12px; color: #999; border-bottom: 1px solid #e8e8e8; }
+  .breadcrumb span { color: #1890ff; }
+  /* 主体 */
+  .main { display: flex; padding: 16px; gap: 16px; }
+  .sidebar { width: 180px; flex-shrink: 0; }
+  .sidebar .menu-item { padding: 8px 12px; cursor: pointer; color: #333; font-size: 13px; border-left: 3px solid transparent; }
+  .sidebar .menu-item:hover { background: #e6f7ff; }
+  .sidebar .menu-item.active { background: #e6f7ff; border-left-color: #1890ff; color: #1890ff; font-weight: bold; }
+  .content { flex: 1; }
+  /* 卡片 */
+  .card { background: #fff; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .card-header { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+  .card-header .title { font-weight: bold; font-size: 14px; }
+  .card-body { padding: 12px 16px; }
+  /* Tab */
+  .tabs { display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 12px; }
+  .tab { padding: 8px 16px; cursor: pointer; color: #666; border-bottom: 2px solid transparent; }
+  .tab.active { color: #1890ff; border-bottom-color: #1890ff; font-weight: bold; }
+  /* 表单 */
+  .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px 12px; }
+  .form-item { display: flex; align-items: center; }
+  .form-item label { width: 70px; font-size: 12px; color: #666; text-align: right; margin-right: 6px; flex-shrink: 0; }
+  .form-item input, .form-item select { flex: 1; padding: 4px 8px; border: 1px solid #d9d9d9; border-radius: 2px; font-size: 13px; min-width: 0; }
+  .form-item input:focus, .form-item select:focus { border-color: #1890ff; outline: none; }
+  .form-item input[readonly] { background: #f5f5f5; color: #999; }
+  /* 表格 */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th, .data-table td { border: 1px solid #e8e8e8; padding: 4px 6px; text-align: center; font-size: 12px; }
+  .data-table th { background: #fafafa; font-weight: bold; }
+  .data-table td input { width: 100%; border: 1px solid transparent; padding: 2px 4px; text-align: center; font-size: 12px; background: transparent; }
+  .data-table td input:focus { border-color: #1890ff; background: #e6f7ff; }
+  /* textarea */
+  .form-textarea { width: 100%; min-height: 60px; padding: 6px 8px; border: 1px solid #d9d9d9; border-radius: 2px; font-size: 13px; resize: vertical; }
+  .form-textarea:focus { border-color: #1890ff; outline: none; }
+  /* 按钮 */
+  .btn-row { text-align: right; padding: 12px 0; }
+  .btn { padding: 4px 16px; border: 1px solid #d9d9d9; border-radius: 2px; cursor: pointer; font-size: 13px; margin-left: 8px; }
+  .btn-primary { background: #1890ff; color: #fff; border-color: #1890ff; }
+  /* 状态栏 */
+  .statusbar { background: #001529; color: #ffffffa0; padding: 4px 20px; font-size: 11px; text-align: right; position: fixed; bottom: 0; left: 0; right: 0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="logo">XX油田管理系统 v3.2</span>
+  <span class="nav-item">首页</span>
+  <span class="nav-item active">钻井液</span>
+  <span class="nav-item">固井</span>
+  <span class="nav-item">录井</span>
+  <span class="nav-item">测井</span>
+  <span class="user">当前用户：张三 | 退出</span>
+</div>
+
+<div class="breadcrumb">首页 / 钻井液管理 / 日报管理 / <span>日报填写</span></div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="menu-item">日报查询</div>
+    <div class="menu-item active">日报填写</div>
+    <div class="menu-item">周报汇总</div>
+    <div class="menu-item">月报汇总</div>
+    <div class="menu-item">参数配置</div>
+    <div class="menu-item">模板管理</div>
+  </div>
+
+  <div class="content">
+    <!-- Tab 切换 -->
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active">基本信息</div>
+        <div class="tab">钻井液性能</div>
+        <div class="tab">材料消耗</div>
+        <div class="tab">固控设备</div>
+        <div class="tab">工程简况</div>
+      </div>
+      <div class="card-body">
+        <!-- 基本信息表单 -->
+        <div class="form-grid">
+          <div class="form-item"><label>井号</label><input id="well_name" name="well_name" type="text"></div>
+          <div class="form-item"><label>日期</label><input id="report_date" name="report_date" type="text"></div>
+          <div class="form-item"><label>油田</label><input id="oilfield" name="oilfield" type="text"></div>
+          <div class="form-item"><label>区域</label><input id="region" name="region" type="text"></div>
+          <div class="form-item"><label>钻机</label><input id="rig" name="rig" type="text"></div>
+          <div class="form-item"><label>作业者</label><input id="operator" name="operator" type="text"></div>
+          <div class="form-item"><label>代表</label><input id="operator_rep" name="operator_rep" type="text"></div>
+          <div class="form-item"><label>软件编号</label><input id="software_no" name="software_no" type="text" readonly></div>
+          <div class="form-item"><label>井别</label>
+            <select id="well_type" name="well_type">
+              <option value="">请选择</option>
+              <option value="探井">探井</option>
+              <option value="评价井">评价井</option>
+              <option value="开发井">开发井</option>
+              <option value="调整井">调整井</option>
+            </select>
+          </div>
+          <div class="form-item"><label>钻井液</label>
+            <select id="fluid_type" name="fluid_type">
+              <option value="">请选择</option>
+              <option value="改进型 PEC">改进型 PEC</option>
+              <option value="PEC">PEC</option>
+              <option value="水基">水基</option>
+              <option value="油基">油基</option>
+            </select>
+          </div>
+          <div class="form-item"><label>工况</label>
+            <select id="current_operation" name="current_operation">
+              <option value="">请选择</option>
+              <option value="纯钻进">纯钻进</option>
+              <option value="起钻">起钻</option>
+              <option value="下钻">下钻</option>
+              <option value="循环">循环</option>
+              <option value="测井">测井</option>
+              <option value="固井">固井</option>
+            </select>
+          </div>
+          <div class="form-item"><label>测深</label><input id="measured_depth" name="measured_depth" type="text"></div>
+          <div class="form-item"><label>垂深</label><input id="tvd" name="tvd" type="text"></div>
+          <div class="form-item"><label>水深</label><input id="water_depth" name="water_depth" type="text"></div>
+          <div class="form-item"><label>补心海拔</label><input id="kb_elevation" name="kb_elevation" type="text"></div>
+          <div class="form-item"><label>开钻日期</label><input id="spud_date" name="spud_date" type="text"></div>
+          <div class="form-item"><label>井段</label><input id="hole_section" name="hole_section" type="text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 钻井液性能表 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="title">钻井液性能参数</span>
+        <span style="color:#999;font-size:12px">单位：密度 g/cm³ | 粘度 s | AV/PV mPa·s | YP Pa</span>
+      </div>
+      <div class="card-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>取样点</th><th>密度</th><th>漏斗粘度</th><th>AV</th><th>PV</th><th>YP</th>
+              <th>API失水</th><th>泥饼</th><th>含砂</th><th>pH</th><th>氯根</th><th>钙</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1</td>
+              <td><input id="s1_density" type="text"></td>
+              <td><input id="s1_funnel" type="text"></td>
+              <td><input id="s1_av" type="text"></td>
+              <td><input id="s1_pv" type="text"></td>
+              <td><input id="s1_yp" type="text"></td>
+              <td><input id="s1_filtration" type="text"></td>
+              <td><input id="s1_cake" type="text"></td>
+              <td><input id="s1_sand" type="text"></td>
+              <td><input id="s1_ph" type="text"></td>
+              <td><input id="s1_cl" type="text"></td>
+              <td><input id="s1_ca" type="text"></td>
+            </tr>
+            <tr>
+              <td>#2</td>
+              <td><input id="s2_density" type="text"></td>
+              <td><input id="s2_funnel" type="text"></td>
+              <td><input id="s2_av" type="text"></td>
+              <td><input id="s2_pv" type="text"></td>
+              <td><input id="s2_yp" type="text"></td>
+              <td><input id="s2_filtration" type="text"></td>
+              <td><input id="s2_cake" type="text"></td>
+              <td><input id="s2_sand" type="text"></td>
+              <td><input id="s2_ph" type="text"></td>
+              <td><input id="s2_cl" type="text"></td>
+              <td><input id="s2_ca" type="text"></td>
+            </tr>
+            <tr>
+              <td>#3</td>
+              <td><input id="s3_density" type="text"></td>
+              <td><input id="s3_funnel" type="text"></td>
+              <td><input id="s3_av" type="text"></td>
+              <td><input id="s3_pv" type="text"></td>
+              <td><input id="s3_yp" type="text"></td>
+              <td><input id="s3_filtration" type="text"></td>
+              <td><input id="s3_cake" type="text"></td>
+              <td><input id="s3_sand" type="text"></td>
+              <td><input id="s3_ph" type="text"></td>
+              <td><input id="s3_cl" type="text"></td>
+              <td><input id="s3_ca" type="text"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 长文本 -->
+    <div class="card">
+      <div class="card-header"><span class="title">工程作业简况</span></div>
+      <div class="card-body">
+        <textarea id="engineering_summary" name="engineering_summary" class="form-textarea" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="title">钻井液处理与维护</span></div>
+      <div class="card-body">
+        <textarea id="treatment_log" name="treatment_log" class="form-textarea" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn">暂存</button>
+      <button class="btn btn-primary">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="statusbar">系统版本 3.2.1 | 数据库连接正常 | 最后同步：2026-08-27 09:00:00</div>
+
+</body>
+</html>
