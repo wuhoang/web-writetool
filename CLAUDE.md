@@ -4,7 +4,7 @@
 
 钻井液日报智能自动填写工具。从 PDF 钻井液日报中提取业务数据，通过 Windows UI Automation 自动填写到现有业务系统网页。
 
-**当前阶段**：POC-1 + POC-2 均已完成（v1.0.0），可进入 MVP 阶段。
+**当前阶段**：MVP-GUI v1.2.0 已完成（PDF 全页提取 + tkinter 界面 + UIA 自动填写），正在对接真实业务系统。
 
 ## 仓库结构
 
@@ -62,7 +62,8 @@ poc/
 ### 运行方式
 ```bash
 pip install -r requirements.txt
-python -m gui.run_app           # MVP-GUI 桌面界面（推荐）
+start.bat                       # 双击启动 MVP-GUI（推荐，含错误提示）
+python -m gui.run_app           # MVP-GUI 桌面界面（命令行）
 python poc/run_poc1.py          # POC-1: PDF 提取（命令行）
 python poc/check_model.py       # 业务模型抽查
 python poc/run_poc2.py          # POC-2: 网页填写（需 Chrome，命令行）
@@ -81,6 +82,15 @@ python poc/run_poc2.py          # POC-2: 网页填写（需 Chrome，命令行�
 - 自适应滚动：大步 ±15 → 小步 ±2，目标 y=200~600（远离地址栏和任务栏）
 - 下拉框：`option_index` + `options` 列表配置化，Home+Down+Enter 精确定位
 - 焦点管理：`SetForegroundWindow` 强制浏览器前台，防止终端截获键盘
+- DPI 感知：`SetProcessDpiAwareness(1)` 统一 UIA/pyautogui 坐标系（高分屏必须）
+
+### MVP-GUI 架构要点
+- `gui/app.py`：主窗口，PanedWindow 左右布局（PDF 预览 + 字段面板）
+- `gui/pdf_viewer.py`：PyMuPDF PPM 渲染，翻页/缩放/区域高亮
+- `gui/field_panel.py`：Treeview 分组展示 + 双击编辑 + 置信度着色
+- `gui/fill_runner.py`：填写对话框，后台线程 + 逐字段进度 + 取消按钮
+- 全部3页 PDF 提取：第1页主表、第2页材料追踪、第3页钻井液数量日报
+- `_get_center` 返回 None 防护：控件不可见时 per-field 隔离失败，不影响其他字段
 
 ### 已知限制
 - 布局提示（section_xbands / same_row_boundaries）绑定当前 PDF 模板
@@ -88,9 +98,11 @@ python poc/run_poc2.py          # POC-2: 网页填写（需 Chrome，命令行�
 - span 粘连场景未处理（标签和值在同一 span 时无法拆分）
 - Chrome 需手动启用无障碍（`--force-renderer-accessibility`），真实用户场景需封装
 - 下拉框回读不可靠（Chrome 不暴露选中值）
+- 高 DPI 屏幕（如 2560×1600 + 150%）需 SetProcessDpiAwareness(1) 统一坐标系
+- UIA 控件 rectangle() 可能返回 None（页面未加载完/控件不可见），已做 per-field 隔离
 
 ## MVP 后续计划
 
-- MVP-GUI：tkinter 界面（PDF 预览 + 字段核对）
-- MVP-填写：接入真实业务系统
+- ~~MVP-GUI：tkinter 界面（PDF 预览 + 字段核对）~~ ✅ 已完成
+- MVP-填写：接入真实业务系统（进行中 — UIA 控件定位调试）
 - MVP-打包：PyInstaller 打包为 exe
