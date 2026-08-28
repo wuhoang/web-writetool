@@ -78,6 +78,9 @@ class MainApp(tk.Tk):
         self._btn_fill = ttk.Button(toolbar, text="开始填写", command=self._start_fill, state=tk.DISABLED)
         self._btn_fill.pack(side=tk.LEFT, padx=2)
 
+        self._btn_diag = ttk.Button(toolbar, text="控件诊断", command=self._open_diag, state=tk.DISABLED)
+        self._btn_diag.pack(side=tk.LEFT, padx=2)
+
         ttk.Separator(toolbar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
 
         # Page selector for filling (dropdown)
@@ -277,11 +280,20 @@ class MainApp(tk.Tk):
         self._status_var.set(f"已连接: {title}")
         self._btn_connect.config(state=tk.NORMAL)
         self._btn_fill.config(state=tk.NORMAL)
+        self._btn_diag.config(state=tk.NORMAL)
 
     def _on_connect_error(self, msg: str):
         self._status_var.set(f"连接失败: {msg}")
         self._btn_connect.config(state=tk.NORMAL)
         messagebox.showerror("连接错误", f"无法连接浏览器:\n{msg}")
+
+    def _open_diag(self):
+        """Open browser UIA diagnostics window."""
+        if not self._browser_window:
+            messagebox.showwarning("提示", "请先连接浏览器")
+            return
+        from gui.browser_diag import BrowserDiag
+        BrowserDiag(self, self._browser_window)
 
     def _start_fill(self):
         """Open the fill runner dialog."""
