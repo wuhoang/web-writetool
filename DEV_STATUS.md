@@ -2,9 +2,56 @@
 
 > 最后更新：2026-08-27
 
-## 当前版本：POC-2 v1.0.0
+## 当前版本：MVP-GUI v1.2.0
 
 ### 已完成
+
+#### 全页提取：第2、3页数据纳入 ✅
+
+将 PDF 3 页数据全部纳入提取范围（原仅提取第1页）。
+
+**新增提取**：
+| 页 | 节区 | 字段数 |
+|---|------|--------|
+| 2 | 材料追踪 | 费用汇总(6行) + 27 种材料消耗明细 |
+| 3 | 钻井液数量日报 | 6 个罐 + 井筒泥浆(3行) + 钻井液平衡(11行) |
+
+**改动**：
+- `config/field_rules.yaml`：新增 `section_titles` + `material_tracking` + `fluid_volume_report` 配置
+- `poc/field_mapping.py`：新增 `map_material_tracking()` + `map_fluid_volume_report()` 映射函数
+- `gui/field_panel.py`：新增"材料追踪 (第2页)"和"钻井液数量 (第3页)"展示分组
+
+#### MVP-GUI：tkinter 桌面界面 ✅
+
+将 POC-1（PDF 提取）和 POC-2（网页填写）串联为完整工作流的桌面 GUI。
+
+**功能**：
+- PDF 预览（PyMuPDF 渲染，翻页/缩放/高亮定位）
+- 字段核对（Treeview 分组展示，置信度着色，双击编辑）
+- 一键填写（连接浏览器 + 自动填写 + 进度展示）
+
+**工作流**：
+```
+选择PDF → 自动解析 → 人工核对/编辑 → 连接浏览器 → 一键填写 → 查看结果
+```
+
+**运行方式**：`python -m gui.run_app`
+
+**新增文件**：
+
+| 文件 | 说明 |
+|------|------|
+| `gui/__init__.py` | 包标记 |
+| `gui/app.py` | MainApp 主窗口（~230 行） |
+| `gui/pdf_viewer.py` | PDF 渲染画布（~170 行） |
+| `gui/field_panel.py` | 字段面板 + 编辑（~230 行） |
+| `gui/fill_runner.py` | 填写进度对话框（~130 行） |
+| `gui/run_app.py` | 入口脚本（~20 行） |
+
+**技术要点**：
+- PDF 渲染用 PPM 格式（tkinter 原生支持，无 PIL 依赖）
+- 填写在子线程执行，`root.after()` 安全更新 GUI
+- 不修改任何 POC 模块，纯新增层
 
 #### POC-2：Windows UI Automation 网页填写验证 ✅
 
@@ -100,7 +147,6 @@ UIA 定位控件 (pywinauto, by_id)
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
-| MVP-GUI | tkinter 界面（PDF 预览 + 字段核对） | 未开始 |
 | MVP-填写 | 接入真实业务系统 | 未开始 |
 | MVP-打包 | PyInstaller 打包为 exe | 未开始 |
 

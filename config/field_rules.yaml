@@ -11,6 +11,8 @@ section_titles:
   - 固控设备使用
   - 工程作业简况
   - 钻井液处理与维护
+  - 材料追踪
+  - 钻井液数量日报
 
 layout_hints:
   same_row_boundaries:
@@ -142,3 +144,56 @@ narrative_stop_patterns:
   - 工程师
   - 固相分析
   - 水力学参数
+
+# ── 第2页：材料追踪 ──
+material_tracking:
+  match_title: 材料追踪
+  summary_rows:
+    engineer_cost: [工程师费用]
+    material_cost: [材料费用]
+    equipment_cost: [设备费用]
+    screen_cost: [筛布]
+    daily_total: [当日费用合计]
+    daily_tax: [当日税费]
+  cost_columns: [daily, well_section_cum, total_cum]
+  detail_columns:
+    material: [材料]
+    unit: [单位/单重, 单位单重]
+    unit_price: [单价]
+    start_qty: [开始数量]
+    daily_consumption: [当日消耗]
+    cum_consumption: [累计消耗]
+    daily_receipt: [当日来料]
+    cum_receipt: [累计来料]
+    daily_return: [当日返料]
+    cum_return: [累计返料]
+    inventory: [库存]
+    daily_cost: [当日费用]
+
+# ── 第3页：钻井液数量日报 ──
+fluid_volume_report:
+  match_title: 钻井液数量日报
+  tank_columns:
+    capacity_m3: [容量]
+    density_gcm3: [密度]
+    quantity_m3: [数量]
+    mud_type: [钻井液类型]
+    pit_category: [池类别]
+  wellbore_rows:
+    total_borehole: [总井眼量]
+    non_mud_volume: [非泥浆体积]
+    mud_quantity: [钻井液数量]
+  balance_rows:
+    start_volume: [开始体积]
+    oil_added: [加油量]
+    water_added: [加水量]
+    chem_volume_change: [化学材料体积增量]
+    weight_volume_change: [加重材料体积增量]
+    total_volume_change: [总体积增量, 配浆量]
+    received_volume: [接收体积]
+    returned_volume: [返回体积]
+    transferred_in: [转入体积]
+    transferred_out: [转出体积]
+    daily_loss: [日损失体积]
+    final_volume: [最终体积]
+  balance_columns: [circulation, reserve, other, total]

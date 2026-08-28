@@ -2,6 +2,33 @@
 
 本文件记录每次有意义的变更。格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
+## [1.2.0] - 2026-08-28
+
+PDF 全页提取。将第2、3页数据纳入业务模型。
+
+### Added
+- `config/field_rules.yaml`：新增 `材料追踪`、`钻井液数量日报` 节区标题 + 字段映射配置
+- `poc/field_mapping.py`：新增 `map_material_tracking()` — 第2页材料消耗明细（27种材料 × 12列）
+- `poc/field_mapping.py`：新增 `map_fluid_volume_report()` — 第3页罐容量（6罐）+ 井筒泥浆 + 钻井液平衡
+- `gui/field_panel.py`：新增"材料追踪 (第2页)"和"钻井液数量 (第3页)"展示分组
+
+### Changed
+- `gui/app.py`：启动器 start.bat 纯 ASCII 编码 + start.py 弹窗兜底
+
+## [1.1.0] - 2026-08-28
+
+MVP-GUI 桌面界面。将 POC-1 + POC-2 串联为完整工作流。
+
+### Added
+- `gui/` 包：tkinter 桌面 GUI
+  - `gui/app.py`：主窗口（工具栏 + 左右分栏 + 状态栏）
+  - `gui/pdf_viewer.py`：PDF 渲染画布（PyMuPDF PPM → Canvas，翻页/缩放/高亮定位）
+  - `gui/field_panel.py`：字段面板（Treeview 分组展示 + 双击编辑 + 置信度着色 + PDF 联动高亮）
+  - `gui/fill_runner.py`：填写执行对话框（进度条 + 逐字段状态 + 结果汇总）
+  - `gui/run_app.py`：入口脚本
+- 工作流：选择PDF → 自动解析 → 人工核对/编辑 → 连接浏览器 → 一键填写 → 查看结果
+- 运行方式：`python -m gui.run_app`
+
 ## [1.0.0] - 2026-08-27
 
 POC-2 最终版本。30/30 字段验证通过，5 种布局/策略兼容性测试全部通过。

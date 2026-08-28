@@ -13,6 +13,13 @@ config/
   field_rules.yaml           字段别名/类型/数值范围/布局提示（PDF 模板配置）
   ui_mapping.yaml            字段→网页控件映射配置（UIA 定位 + 下拉框选项）
 docs/顶层设计文档.md          产品级顶层设计文档 v1.3
+gui/                         MVP-GUI 桌面界面
+  __init__.py                包标记
+  app.py                     MainApp 主窗口（工具栏 + PDF 预览 + 字段核对 + 状态栏）
+  pdf_viewer.py              PDF 渲染画布（PyMuPDF PPM → Canvas，翻页/缩放/高亮）
+  field_panel.py             字段面板（Treeview 分组展示 + 双击编辑 + 置信度着色）
+  fill_runner.py             填写执行对话框（进度条 + 逐字段状态 + 结果汇总）
+  run_app.py                 入口脚本（python -m gui.run_app）
 poc/
   layout_recovery.py         词提取→视觉行聚类→节区分配→列谷检测→Table/KV
   field_mapping.py           结构→Business Data Model（含溯源与校验）
@@ -55,9 +62,10 @@ poc/
 ### 运行方式
 ```bash
 pip install -r requirements.txt
-python poc/run_poc1.py          # POC-1: PDF 提取
+python -m gui.run_app           # MVP-GUI 桌面界面（推荐）
+python poc/run_poc1.py          # POC-1: PDF 提取（命令行）
 python poc/check_model.py       # 业务模型抽查
-python poc/run_poc2.py          # POC-2: 网页填写（需 Chrome）
+python poc/run_poc2.py          # POC-2: 网页填写（需 Chrome，命令行）
 ```
 
 ### 关键算法

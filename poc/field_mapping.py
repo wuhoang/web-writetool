@@ -286,6 +286,295 @@ def map_narratives(sections: list[Section], rules: dict) -> dict:
     return out
 
 
+def _token_text(token) -> str:
+    """Get token text (works for both Token objects and plain tuples)."""
+    if hasattr(token, "text"):
+        return token.text
+    return str(token)
+
+
+def map_material_tracking(sections: list[Section], rules: dict) -> tuple[dict, list[str]]:
+    """Map page 2 '材料追踪' section.
+
+    Returns (result, notes) where result has:
+      - summary: cost summary rows (当日/井段累计/全井累计)
+      - engineer_costs: list of engineer cost entries (currently just headers)
+      - materials: list of material consumption rows
+    """
+    cfg = rules.get("material_tracking", {})
+    sec = _find_section(sections, cfg.get("match_title", "材料追踪"))
+    if sec is None:
+        return {}, ["section_not_found:材料追踪"]
+
+    lines = sec.lines
+    result: dict = {"summary": {}, "engineer_costs": [], "materials": []}
+    notes: list[str] = []
+
+    # Parse summary rows (lines 4-10 area: 工程师费用, 材料费用, 设备费用, etc.)
+    # These are short lines: label + 1-3 numeric values (当日/井段累计/全井累计)
+    # Distinguish from table header lines which have many label tokens
+    summary_labels = set()
+    for row_spec in cfg.get("summary_rows", {}).values():
+        for alias in row_spec:
+            summary_labels.add(alias)
+
+    for ln in lines:
+        text = ln.text()
+        tokens = ln.tokens
+        if len(tokens) < 2 or len(tokens) > 5:
+            continue
+        first_token = tokens[0].text.strip()
+        if first_token not in summary_labels:
+            continue
+        # Check remaining tokens are numeric (not more labels)
+        remaining = [t.text.strip() for t in tokens[1:]]
+        non_numeric = sum(1 for r in remaining if _number(r) is None and not r.startswith("¥"))
+        if non_numeric > 0:
+            continue  # This is a header line, not a summary row
+        result["summary"][first_token] = {
+            "raw_text": text,
+            "values": remaining,
+            "confidence": CONF_EXACT,
+            "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+        }
+
+    # Find material data rows: start after "材料费用" + column header lines
+    # Material rows have pattern: material_name [unit] [price] numbers...
+    data_started = False
+    for ln in lines:
+        text = ln.text()
+        tokens = ln.tokens
+        if not tokens:
+            continue
+
+        first = tokens[0].text.strip()
+
+        # Skip headers and summary rows
+        if first in ("材料费用", "工程师费用", "设备费用", "筛布", "当日费用合计",
+                      "当日税费", "作业者:", "#5", "QHD35-4-5"):
+            continue
+        if first in ("当日", "井段累计", "全井累计", "数量", "单价",
+                      "单位", "单位/单重", "单位单重", "开始数量",
+                      "消耗", "累计消耗当日", "来料", "累计来料当日返料累计返料",
+                      "库存", "当日费用", "库存和消耗"):
+            continue
+
+        # Material data rows: first token is material name (uppercase letters/hyphens)
+        # Must have at least 2 tokens (name + something)
+        if len(tokens) < 2:
+            continue
+
+        # Identify material name (first token, or first two if second is a suffix like "HV", "LV", "H")
+        mat_name = first
+        idx = 1
+        # Multi-part names: "PF-PAC HV", "PF-XC H", "PF-FOL TROL", "PF-BLN 1/2/3"
+        if idx < len(tokens):
+            second = tokens[idx].text.strip()
+            # If second token is short and alphabetic/numeric (not a unit or price)
+            if (len(second) <= 6 and not second.startswith("¥")
+                and not second.endswith("Kg/SX") and not second.endswith("Kg/DR")
+                and not second.replace(".", "").replace(",", "").isdigit()):
+                mat_name += " " + second
+                idx += 1
+
+        # Remaining tokens: [unit] [price] [start_qty] [daily_cons] [cum_cons] ...
+        remaining = tokens[idx:]
+        entry: dict = {
+            "material": {"raw_text": mat_name, "value": mat_name, "confidence": CONF_EXACT},
+            "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+        }
+
+        # Parse remaining tokens by pattern
+        nums = []
+        unit_raw = None
+        price_raw = None
+        for t in remaining:
+            ttxt = t.text.strip()
+            if not ttxt:
+                continue
+            if "Kg/" in ttxt or "kg/" in ttxt:
+                unit_raw = ttxt
+            elif ttxt.startswith("¥"):
+                if price_raw is None:
+                    price_raw = ttxt
+                # second ¥ is daily_cost at the end
+            else:
+                nums.append(ttxt)
+
+        if unit_raw:
+            entry["unit"] = {"raw_text": unit_raw, "value": unit_raw, "confidence": CONF_EXACT}
+        if price_raw:
+            entry["unit_price"] = {"raw_text": price_raw, "value": price_raw, "confidence": CONF_EXACT}
+
+        # Map numeric values to fields based on position
+        # Expected order: start_qty, daily_consumption, cum_consumption,
+        #                 daily_receipt, cum_receipt, daily_return, cum_return, inventory
+        num_fields = [
+            "start_qty", "daily_consumption", "cum_consumption",
+            "daily_receipt", "cum_receipt", "daily_return", "cum_return", "inventory",
+        ]
+        for i, nval in enumerate(nums):
+            if i < len(num_fields):
+                entry[num_fields[i]] = {
+                    "raw_text": nval,
+                    "value": _number(nval) if _number(nval) is not None else nval,
+                    "confidence": CONF_NUMERIC_OK if _number(nval) is not None else CONF_EXACT,
+                }
+
+        # Last token might be daily_cost (¥ value)
+        if remaining and remaining[-1].text.strip().startswith("¥"):
+            entry["daily_cost"] = {
+                "raw_text": remaining[-1].text.strip(),
+                "value": remaining[-1].text.strip(),
+                "confidence": CONF_EXACT,
+            }
+
+        result["materials"].append(entry)
+
+    return result, notes
+
+
+def map_fluid_volume_report(sections: list[Section], rules: dict) -> tuple[dict, list[str]]:
+    """Map page 3 '钻井液数量日报' section.
+
+    Returns (result, notes) where result has:
+      - tanks: list of tank entries (capacity, density, quantity, type, category)
+      - total_volume_m3: total volume
+      - non_transfer_volume_m3: non-transfer tank volume
+      - wellbore: wellbore mud data
+      - balance: mud balance data (rows × columns)
+    """
+    cfg = rules.get("fluid_volume_report", {})
+    sec = _find_section(sections, cfg.get("match_title", "钻井液数量日报"))
+    if sec is None:
+        return {}, ["section_not_found:钻井液数量日报"]
+
+    lines = sec.lines
+    result: dict = {"tanks": [], "wellbore": {}, "balance": {}}
+    notes: list[str] = []
+
+    for ln in lines:
+        text = ln.text()
+        tokens = ln.tokens
+        if not tokens:
+            continue
+
+        first = tokens[0].text.strip()
+
+        # Skip headers and page metadata
+        if first in ("#5", "QHD35-4-5", "作业者:", "罐", "容量", "m³", "g/cm³",
+                      "Total", "Non", "Trans", "Volume"):
+            continue
+        if first in ("钻井液类型", "池类别", "总体积", "不可转移罐体积m³",
+                      "井筒内泥浆(m³)", "环空", "管柱", "钻头下", "合计",
+                      "钻井液平衡(m³)", "损耗量(m³)", "增/减:", "循环", "储备", "其它",
+                      "地层漏失", "地面损耗"):
+            continue
+        if first.startswith("3 /") or first.startswith("2 /") or first.startswith("1 /"):
+            continue
+
+        # Tank data rows: tank_number capacity density quantity type category [total_vol]
+        # Use x-coordinate ranges to map columns (density column is often empty)
+        # Column x-ranges (from header analysis):
+        #   tank_no: <80, capacity: 100-165, density: 165-220, quantity: 220-275,
+        #   mud_type: 275-345, pit_category: 345-420, total: >420
+        if first.isdigit() and len(tokens) >= 4:
+            tank_num = first
+            entry = {
+                "tank_no": {"raw_text": tank_num, "value": int(tank_num), "confidence": CONF_EXACT},
+                "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+            }
+            # Map tokens by x-coordinate ranges
+            # Column ranges: capacity <165, density 165-220, quantity 220-275,
+            #                mud_type 275-345, pit_category 345-420, total >420
+            mud_buf: list[str] = []
+            cat_buf: list[str] = []
+            for t in tokens[1:]:
+                ttxt = t.text.strip()
+                tcx = (t.x0 + t.x1) / 2
+                if _number(ttxt) is not None:
+                    num = _number(ttxt)
+                    if tcx < 165:
+                        entry["capacity_m3"] = {"raw_text": ttxt, "value": num, "confidence": CONF_NUMERIC_OK}
+                    elif tcx < 220:
+                        entry["density_gcm3"] = {"raw_text": ttxt, "value": num, "confidence": CONF_NUMERIC_OK}
+                    elif tcx < 275:
+                        entry["quantity_m3"] = {"raw_text": ttxt, "value": num, "confidence": CONF_NUMERIC_OK}
+                    elif tcx > 420:
+                        entry["total_m3"] = {"raw_text": ttxt, "value": num, "confidence": CONF_NUMERIC_OK}
+                else:
+                    if ttxt:
+                        if tcx < 345:
+                            mud_buf.append(ttxt)
+                        else:
+                            cat_buf.append(ttxt)
+            if mud_buf:
+                merged = "".join(mud_buf)
+                entry["mud_type"] = {"raw_text": merged, "value": merged, "confidence": CONF_EXACT}
+            if cat_buf:
+                merged = "".join(cat_buf)
+                entry["pit_category"] = {"raw_text": merged, "value": merged, "confidence": CONF_EXACT}
+
+            result["tanks"].append(entry)
+            continue
+
+        # 沉砂 row
+        if first == "沉砂":
+            nums = [_number(t.text.strip()) for t in tokens[1:] if _number(t.text.strip()) is not None]
+            texts = [t.text.strip() for t in tokens[1:] if t.text.strip() and _number(t.text.strip()) is None]
+            entry = {
+                "tank_no": {"raw_text": "沉砂", "value": "沉砂", "confidence": CONF_EXACT},
+                "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+            }
+            if nums:
+                entry["quantity_m3"] = {"raw_text": str(nums[0]), "value": nums[0], "confidence": CONF_NUMERIC_OK}
+            if texts:
+                entry["mud_type"] = {"raw_text": texts[0], "value": texts[0], "confidence": CONF_EXACT}
+            result["tanks"].append(entry)
+            continue
+
+        # 总体积 row (e.g. "总体积m³" header or value)
+        if "总体积" in first:
+            # This might be a header row or a value row
+            continue
+
+        # 不可转移罐体积
+        if "不可转移" in first:
+            continue
+
+        # Wellbore rows: 总井眼量, 非泥浆体积, 钻井液数量
+        wellbore_labels = cfg.get("wellbore_rows", {})
+        matched_wellbore = False
+        for field_id, aliases in wellbore_labels.items():
+            if any(alias in first for alias in aliases):
+                nums = [t.text.strip() for t in tokens[1:]]
+                result["wellbore"][field_id] = {
+                    "raw_text": text,
+                    "values": nums,
+                    "confidence": CONF_NUMERIC_OK,
+                    "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+                }
+                matched_wellbore = True
+                break
+        if matched_wellbore:
+            continue
+
+        # Balance rows (match by containment to handle parentheses like "总体积增量(配浆量)")
+        balance_labels = cfg.get("balance_rows", {})
+        for field_id, aliases in balance_labels.items():
+            if any(alias in first for alias in aliases):
+                nums = [t.text.strip() for t in tokens[1:]]
+                result["balance"][field_id] = {
+                    "raw_text": text,
+                    "values": nums,
+                    "confidence": CONF_NUMERIC_OK,
+                    "source": {"page": sec.page, "bbox": [ln.x0, ln.y0, ln.x1, ln.y1]},
+                }
+                break
+
+    return result, notes
+
+
 def build_business_model(pdf_path: Path, rules_path: Path) -> tuple[dict, dict]:
     rules = load_rules(rules_path)
     hints = rules.get("layout_hints", {})
@@ -309,6 +598,8 @@ def build_business_model(pdf_path: Path, rules_path: Path) -> tuple[dict, dict]:
         required_key="equipment",
     )
     narratives = map_narratives(sections, rules)
+    material_tracking, mt_notes = map_material_tracking(sections, rules)
+    fluid_volume, fv_notes = map_fluid_volume_report(sections, rules)
 
     model = {
         "report_type": rules["document_type"],
@@ -318,10 +609,14 @@ def build_business_model(pdf_path: Path, rules_path: Path) -> tuple[dict, dict]:
         "materials_consumed": materials,
         "solids_control": solids,
         "narratives": narratives,
+        "material_tracking": material_tracking,
+        "fluid_volume_report": fluid_volume,
     }
     audit = {
         "meta": meta_audit,
         "fluid_properties_notes": fluid_notes,
+        "material_tracking_notes": mt_notes,
+        "fluid_volume_notes": fv_notes,
         "counts": {
             "meta_matched": len(meta),
             "meta_expected": len(rules["meta_fields"]),
@@ -329,6 +624,8 @@ def build_business_model(pdf_path: Path, rules_path: Path) -> tuple[dict, dict]:
             "material_rows": len(materials),
             "solids_rows": len(solids),
             "narratives": [k for k, v in narratives.items() if "raw_text" in v],
+            "material_tracking_materials": len(material_tracking.get("materials", [])),
+            "fluid_volume_tanks": len(fluid_volume.get("tanks", [])),
         },
     }
     return model, audit
