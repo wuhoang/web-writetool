@@ -1,15 +1,26 @@
 """
-ui_automation.py — UIA 定位 + pyautogui 写入 (v7)
+ui_automation.py — UIA 定位 + pyautogui 写入 (v8)
 
 Locator: pywinauto UIA 找控件、获取屏幕坐标
 Actor:   pyautogui 坐标点击 + 剪贴板粘贴
 """
 from __future__ import annotations
 
+import ctypes
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
+
+# ── DPI 感知：必须在 pyautogui/pywinauto 初始化之前设置 ──
+# 高 DPI 屏幕上如果不设置，UIA 返回逻辑坐标而 pyautogui 使用物理坐标，点击会偏移
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)  # Per-Monitor DPI Aware
+except Exception:
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()  # System DPI Aware (fallback)
+    except Exception:
+        pass
 
 import pyautogui
 import pyperclip

@@ -4,12 +4,23 @@ Ties together PdfViewer, FieldPanel, and the POC-1/POC-2 pipelines.
 """
 from __future__ import annotations
 
+import ctypes
 import json
 import os
 import subprocess
 import sys
 import threading
 import time
+
+# ── DPI 感知：必须在 tkinter/pywinauto/pyautogui 之前设置 ──
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)
+except Exception:
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()
+    except Exception:
+        pass
+
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
