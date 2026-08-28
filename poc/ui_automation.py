@@ -122,11 +122,17 @@ def resolve_model_path(model: dict, path: str) -> str:
 
 # ── Locator (UIA) ────────────────────────────────────────
 
-def _get_center(ctrl) -> tuple[int, int]:
-    rect = ctrl.rectangle()
-    cx = (rect.left + rect.right) // 2
-    cy = (rect.top + rect.bottom) // 2
-    return (cx, cy)
+def _get_center(ctrl) -> tuple[int, int] | None:
+    """Return center (x, y) or None if the control has no valid bounding box."""
+    try:
+        rect = ctrl.rectangle()
+        if rect is None or rect.left is None or rect.top is None:
+            return None
+        cx = (rect.left + rect.right) // 2
+        cy = (rect.top + rect.bottom) // 2
+        return (cx, cy)
+    except Exception:
+        return None
 
 
 def locate_control(browser_window, spec: dict) -> LocateResult:
@@ -146,8 +152,10 @@ def locate_control(browser_window, spec: dict) -> LocateResult:
         if not ctrl.exists(timeout=2):
             return LocateResult(found=False, error=f"{strategy}={target!r} not found")
 
-        cx, cy = _get_center(ctrl)
-        return LocateResult(found=True, control=ctrl, center=(cx, cy), method=strategy)
+        center = _get_center(ctrl)
+        if center is None:
+            return LocateResult(found=False, error=f"{strategy}={target!r} 控件存在但不可见（无边界矩形）")
+        return LocateResult(found=True, control=ctrl, center=center, method=strategy)
     except Exception as e:
         return LocateResult(found=False, error=str(e))
 
@@ -202,8 +210,10 @@ def _locate_by_label(browser_window, label_text: str) -> LocateResult:
                 continue
 
         if best:
-            cx, cy = _get_center(best)
-            return LocateResult(found=True, control=best, center=(cx, cy), method="by_label")
+            center = _get_center(best)
+            if center is None:
+                return LocateResult(found=False, error=f"label {label_text!r} 附近控件不可见")
+            return LocateResult(found=True, control=best, center=center, method="by_label")
         return LocateResult(found=False, error=f"no input near label {label_text!r}")
     except Exception as e:
         return LocateResult(found=False, error=str(e))
@@ -283,7 +293,11 @@ def _scroll_into_view(browser_window, ctrl, screen_h: int, max_scrolls: int = 30
     time.sleep(0.15)
 
     for i in range(max_scrolls):
-        cx, cy = _get_center(ctrl)
+        center = _get_center(ctrl)
+        if center is None:
+            time.sleep(0.15)
+            continue
+        cx, cy = center
         if 200 < cy < 600:
             return
         dist = abs(cy - 400)
@@ -344,7 +358,14 @@ def run_fill(
             # 需要滚动时重新设置前台
             if cy > 600 or cy < 200:
                 _scroll_into_view(browser_window, loc.control, screen_h)
-                cx, cy = _get_center(loc.control)
+                new_center = _get_center(loc.control)
+                if new_center is None:
+                    report.results.append(FillResult(
+                        field_name=field_name, expected=value,
+                        error="滚动后控件不可见", method="scroll_lost",
+                    ))
+                    continue
+                cx, cy = new_center
                 fg_set = True
 
             # 填写

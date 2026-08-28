@@ -173,7 +173,16 @@ class FillRunner(tk.Toplevel):
                     cx, cy = loc.center
                     if cy > 600 or cy < 200:
                         _scroll_into_view(self._browser, loc.control, screen_h)
-                        cx, cy = _get_center(loc.control)
+                        new_center = _get_center(loc.control)
+                        if new_center is None:
+                            report.results.append(FillResult(
+                                field_name=field_name, expected=value,
+                                error="滚动后控件不可见", method="scroll_lost",
+                            ))
+                            self.after(0, lambda fn=field_name: self._on_field_progress(
+                                -1, 0, fn, "fail", "滚动后控件不可见"))
+                            continue
+                        cx, cy = new_center
 
                     # Fill
                     if control_type == ControlType.SELECT:
