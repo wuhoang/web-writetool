@@ -99,7 +99,9 @@ class KeyValue:
 
     @property
     def raw_text(self) -> str:
-        return " ".join(t.text for t in self.value_tokens).strip()
+        text = " ".join(t.text for t in self.value_tokens).strip()
+        # 去掉值开头可能残留的冒号（来自 "标签: 值" 被拆分的 token）
+        return text.lstrip(":：").strip()
 
     @property
     def bbox(self) -> tuple[float, float, float, float]:
@@ -363,20 +365,59 @@ TIME_LABEL_RE = re.compile(r"^\d{1,2}[:：]\d{2}")
 
 def extract_key_values(lines: list[Line]) -> list[KeyValue]:
     pairs: list[KeyValue] = []
+    colon_chars = COLON_CHARS
     for line in lines:
         tokens = line.tokens
         i = 0
         while i < len(tokens):
             token = tokens[i]
-            if not token.text.endswith(tuple(COLON_CHARS)) or TIME_LABEL_RE.match(token.text):
+
+            # 正常情况：token 以冒号结尾（如 "钻机:"）
+            if token.text.endswith(tuple(colon_chars)) and not TIME_LABEL_RE.match(token.text):
+                label = token.text.rstrip(colon_chars).strip()
+                value_start = i + 1
+            # 特殊情况：当前 token 不以冒号结尾，但下一个 token 以冒号开头
+            # （PyMuPDF 把 "井号: 值" 拆成了 "井号" + ": 值"）
+            elif (i + 1 < len(tokens)
+                  and tokens[i + 1].text[:1] in colon_chars
+                  and tokens[i + 1].x0 - token.x1 < 5):
+                label = token.text.strip()
+                # 下一个 token 去掉开头的冒号，作为值的一部分
+                nxt = tokens[i + 1]
+                stripped = nxt.text.lstrip(COLON_CHARS).strip()
+                value_start = i + 2
+                # 构造剩余值 token 列表（把剥离冒号后的文本和后续 token 合并）
+                values: list[Token] = []
+                if stripped:
+                    values.append(nxt)  # 保留原始 token 用于坐标
+                j = value_start
+                while j < len(tokens):
+                    nxt2 = tokens[j]
+                    if nxt2.text.endswith(tuple(colon_chars)):
+                        break
+                    if values and nxt2.x0 - values[-1].x1 > 12:
+                        break
+                    if not values and nxt2.x0 - token.x1 > 15:
+                        break
+                    values.append(nxt2)
+                    j += 1
+                if label and values:
+                    pairs.append(KeyValue(label=label, value_tokens=values, page=token.page))
+                    i = j
+                    continue
+                else:
+                    i += 1
+                    continue
+            else:
                 i += 1
                 continue
-            label = token.text.rstrip(COLON_CHARS).strip()
-            values: list[Token] = []
-            j = i + 1
+
+            # 正常冒号结尾的处理
+            values = []
+            j = value_start
             while j < len(tokens):
                 nxt = tokens[j]
-                if nxt.text.endswith(tuple(COLON_CHARS)):
+                if nxt.text.endswith(tuple(colon_chars)):
                     break
                 if values and nxt.x0 - values[-1].x1 > 12:
                     break

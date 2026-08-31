@@ -124,9 +124,10 @@ def map_meta_fields(kv_pairs: list[KeyValue], rules: dict) -> tuple[dict, dict]:
                 source={"derived_from": spec["derive_from"], "pattern": spec["derive_pattern"]},
             )
 
+    required_fields = {k for k, v in rules["meta_fields"].items() if not v.get("optional")}
     audit = {
         "matched": sorted(meta),
-        "missing": sorted(set(rules["meta_fields"]) - set(meta)),
+        "missing": sorted(required_fields - set(meta)),
         "unmapped_kv_labels": [kv.label for i, kv in enumerate(kv_pairs) if i not in used_pairs],
     }
     return {k: v.to_json() for k, v in meta.items()}, audit
@@ -619,7 +620,7 @@ def build_business_model(pdf_path: Path, rules_path: Path) -> tuple[dict, dict]:
         "fluid_volume_notes": fv_notes,
         "counts": {
             "meta_matched": len(meta),
-            "meta_expected": len(rules["meta_fields"]),
+            "meta_expected": sum(1 for v in rules["meta_fields"].values() if not v.get("optional")),
             "sample_points": len(fluid),
             "material_rows": len(materials),
             "solids_rows": len(solids),

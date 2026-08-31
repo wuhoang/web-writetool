@@ -33,6 +33,7 @@ meta_fields:
   fsr_no:
     aliases: [FSR]
     type: string
+    optional: true
     derive_from: well_name
     derive_pattern: 'FSR:?\s*(#\S+|\S+)'
   operator:
@@ -62,9 +63,11 @@ meta_fields:
   spud_date:
     aliases: [开钻日期]
     type: datetime
+    optional: true
   current_operation:
     aliases: [当前工况]
     type: string
+    optional: true
   water_depth_m:
     aliases: [水深]
     type: number
@@ -82,6 +85,7 @@ meta_fields:
   hole_section:
     aliases: [井段]
     type: string
+    optional: true
 
 fluid_properties:
   match_title: 钻井液性能
