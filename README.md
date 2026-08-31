@@ -49,6 +49,7 @@ poc/
   test_vertical.html         测试页面（垂直布局）
   test_no_id.html            测试页面（无 id 属性）
   check_model.py             业务模型抽查
+  batch_test.py              PDF 批量提取测试
 ```
 
 ## 验证结果
