@@ -380,7 +380,7 @@ def extract_key_values(lines: list[Line]) -> list[KeyValue]:
             # （PyMuPDF 把 "井号: 值" 拆成了 "井号" + ": 值"）
             elif (i + 1 < len(tokens)
                   and tokens[i + 1].text[:1] in colon_chars
-                  and tokens[i + 1].x0 - token.x1 < 5):
+                  and tokens[i + 1].x0 - token.x1 < 12):
                 label = token.text.strip()
                 # 下一个 token 去掉开头的冒号，作为值的一部分
                 nxt = tokens[i + 1]

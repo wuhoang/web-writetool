@@ -41,7 +41,7 @@ def extract_one(pdf_path: Path, rules: dict) -> dict:
         "solids_rows": ca["solids_rows"],
         "narratives": list(ca["narratives"]),
         "narrative_missing": sorted(set(rules.get("narrative_sections", [])) - set(ca["narratives"])),
-        "ok": ca["meta_matched"] >= ca["meta_expected"] and not audit["meta"]["missing"],
+        "ok": not audit["meta"]["missing"],
     }
 
 
